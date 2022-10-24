@@ -37,7 +37,7 @@ class DonjonController extends AbstractController
         $limit = $request->get('limit',5);
         $limit = $limit > 20 ? 20 : $limit;
         $donjon = $repository->findWithPagination($page,$limit);
-        $jsonDonjon = $serializer->serialize($donjon, 'json', ['groups' => 'getAllDonjons','getAllChallenge']);
+        $jsonDonjon = $serializer->serialize($donjon, 'json', ['groups' => 'getAllDonjons']);
         return new JsonResponse($jsonDonjon, Response::HTTP_OK, [], true);
     }
 
@@ -48,7 +48,7 @@ class DonjonController extends AbstractController
         Donjon $donjon,
         SerializerInterface $serializer
     ): JsonResponse {
-        $jsondonjon = $serializer->serialize($donjon, 'json', ['groups' => 'getAllDonjons','getAllChallenge']);
+        $jsondonjon = $serializer->serialize($donjon, 'json', ['groups' => 'getDonjon']);
         return new JsonResponse($jsondonjon, Response::HTTP_OK, ['accept' => 'json'], true);
     }
 

@@ -23,12 +23,12 @@ class Challenge
     #[Assert\NotBlank(message: "Challenge must have name")]
     #[Assert\NotNull(message: "Challenge must have name")]
     #[ORM\Column(length: 255)]
-    #[Groups(['getAllChallenges','getDonjon','getAllDonjon','getChallenge'])]
+    #[Groups(['getAllChallenges','getDonjon','getAllDonjons','getChallenge'])]
     private ?string $challengeName = null;
 
     #[Assert\NotNull(message: "Challenge description must not be null")]
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['getAllChallenges','getDonjon','getAllDonjon','getChallenge'])]
+    #[Groups(['getAllChallenges','getDonjon','getAllDonjons','getChallenge'])]
     private ?string $description = null;
 
     #[Groups(['getAllChallenges','getAllDonjon'])]
