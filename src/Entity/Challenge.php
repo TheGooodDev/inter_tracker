@@ -31,6 +31,7 @@ class Challenge
     #[Groups(['getAllChallenges','getDonjon','getAllDonjon','getChallenge'])]
     private ?string $description = null;
 
+    #[Groups(['getAllChallenges','getAllDonjon'])]
     #[ORM\OneToMany(mappedBy: 'challenges', targetEntity: Donjon::class)]
     private Collection $donjons;
 

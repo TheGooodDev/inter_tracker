@@ -30,9 +30,13 @@ class DonjonController extends AbstractController
     #[Route('/api/donjons', name: 'donjon.getAll',methods:['GET'])]
     public function getAllDonjons(
         DonjonRepository $repository,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        Request $request
     ): JsonResponse {
-        $donjon = $repository->findAll();
+        $page = $request->get('page',1);
+        $limit = $request->get('limit',5);
+        $limit = $limit > 20 ? 20 : $limit;
+        $donjon = $repository->findWithPagination($page,$limit);
         $jsonDonjon = $serializer->serialize($donjon, 'json', ['groups' => 'getAllDonjons','getAllChallenge']);
         return new JsonResponse($jsonDonjon, Response::HTTP_OK, [], true);
     }

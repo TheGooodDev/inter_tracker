@@ -34,12 +34,10 @@ class PlayerController extends AbstractController
         SerializerInterface $serializer,
         Request $request
     ): JsonResponse {
-        // $player = $repository->findAll();
         $page = $request->get('page',1);
         $limit = $request->get('limit',5);
         $limit = $limit > 20 ? 20 : $limit;
         $player = $repository->findWithPagination($page,$limit);
-        dd($player);
         $jsonPlayers = $serializer->serialize($player, 'json');
         return new JsonResponse($jsonPlayers, Response::HTTP_OK, [], true);
     }

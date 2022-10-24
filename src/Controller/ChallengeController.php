@@ -29,9 +29,13 @@ class ChallengeController extends AbstractController
     #[Route('/api/challenges', name: 'challenge.getAll',methods:['GET'])]
     public function getAllChallenges(
         ChallengeRepository $repository,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        Request $request
     ): JsonResponse {
-        $challenge = $repository->findAll();
+        $page = $request->get('page',1);
+        $limit = $request->get('limit',5);
+        $limit = $limit > 20 ? 20 : $limit;
+        $challenge = $repository->findWithPagination($page,$limit);
         $jsonChallenges = $serializer->serialize($challenge, 'json', ['groups' => 'getAllChallenges']);
         return new JsonResponse($jsonChallenges, Response::HTTP_OK, [], true);
     }

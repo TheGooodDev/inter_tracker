@@ -39,6 +39,13 @@ class DonjonRepository extends ServiceEntityRepository
         }
     }
 
+    public function findWithPagination($page,$limit){
+        $qb = $this->createQueryBuilder('s')
+        ->setFirstResult(($page-1)*$limit)
+        ->setMaxResults($limit);
+        return $qb->getQuery()->getResult();
+    }
+
 //    /**
 //     * @return Donjon[] Returns an array of Donjon objects
 //     */
