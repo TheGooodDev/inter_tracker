@@ -6,6 +6,8 @@ use App\Repository\DonjonRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
 #[ORM\Entity(repositoryClass: DonjonRepository::class)]
 class Donjon
 {
@@ -14,19 +16,26 @@ class Donjon
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank(message: "Donjon must have name")]
+    #[Assert\NotNull(message: "Donjon must have name")]
     #[ORM\Column(length: 255)]
     #[Groups(['getDonjon','getAllDonjons'])]
     private ?string $name = null;
 
+    #[Assert\NotBlank(message: "Donjon must have a level")]
+    #[Assert\NotNull(message: "Donjon must have a level")]
     #[ORM\Column]
     #[Groups(['getAllChallenges','getDonjon','getAllDonjons','getChallenge'])]
     private ?int $level = null;
 
+    #[Assert\NotBlank(message: "Donjon must have challenges")]
+    #[Assert\NotNull(message: "Donjon must have challenges")]
     #[ORM\ManyToOne(inversedBy: 'donjons')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['getAllChallenges','getDonjon','getAllDonjons','getChallenge'])]
     private ?Challenge $challenges = null;
 
+    #[Assert\NotNull(message: "Donjon must have challenges")]
     #[ORM\Column]
     private ?bool $status = null;
 

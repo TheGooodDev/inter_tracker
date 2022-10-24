@@ -9,6 +9,9 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+use Symfony\Component\Validator\Constraints as Assert;
+
+
 #[ORM\Entity(repositoryClass: ChallengeRepository::class)]
 class Challenge
 {
@@ -17,10 +20,13 @@ class Challenge
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\NotBlank(message: "Challenge must have name")]
+    #[Assert\NotNull(message: "Challenge must have name")]
     #[ORM\Column(length: 255)]
     #[Groups(['getAllChallenges','getDonjon','getAllDonjon','getChallenge'])]
     private ?string $challengeName = null;
 
+    #[Assert\NotNull(message: "Challenge description must not be null")]
     #[ORM\Column(type: Types::TEXT)]
     #[Groups(['getAllChallenges','getDonjon','getAllDonjon','getChallenge'])]
     private ?string $description = null;

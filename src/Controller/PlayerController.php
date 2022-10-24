@@ -15,6 +15,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PlayerController extends AbstractController
 {
@@ -64,13 +65,18 @@ class PlayerController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
-        UrlGeneratorInterface $urlGenerator
+        UrlGeneratorInterface $urlGenerator,
+        ValidatorInterface $validators
     ): JsonResponse {
         $player = $serializer->deserialize($request->getContent(), Player::class, 'json');
         $player->setStatus(true);
 
         $content = $request->toArray();
 
+        $errors = $validators->validate($player);
+        if($errors->count() > 0){
+            return new JsonResponse($serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST,[],true);
+        }
         $entityManager->persist($player);
         $entityManager->flush();
 

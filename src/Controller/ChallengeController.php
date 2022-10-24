@@ -43,7 +43,7 @@ class ChallengeController extends AbstractController
         Challenge $challenge,
         SerializerInterface $serializer
     ): JsonResponse {
-        $jsonChallenge = $serializer->serialize($challenge, 'json', ['groups' => 'getAllChallenges']);
+        $jsonChallenge = $serializer->serialize($challenge, 'json', ['groups' => 'getChallenge']);
         return new JsonResponse($jsonChallenge, Response::HTTP_OK, ['accept' => 'json'], true);
     }
 
