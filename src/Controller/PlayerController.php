@@ -31,9 +31,15 @@ class PlayerController extends AbstractController
     #[Route('/api/players', name: 'player.getAll',methods:['GET'])]
     public function getAllPlayers(
         PlayerRepository $repository,
-        SerializerInterface $serializer
+        SerializerInterface $serializer,
+        Request $request
     ): JsonResponse {
-        $player = $repository->findAll();
+        // $player = $repository->findAll();
+        $page = $request->get('page',1);
+        $limit = $request->get('limit',5);
+        $limit = $limit > 20 ? 20 : $limit;
+        $player = $repository->findWithPagination($page,$limit);
+        dd($player);
         $jsonPlayers = $serializer->serialize($player, 'json');
         return new JsonResponse($jsonPlayers, Response::HTTP_OK, [], true);
     }
@@ -70,8 +76,6 @@ class PlayerController extends AbstractController
     ): JsonResponse {
         $player = $serializer->deserialize($request->getContent(), Player::class, 'json');
         $player->setStatus(true);
-
-        $content = $request->toArray();
 
         $errors = $validators->validate($player);
         if($errors->count() > 0){

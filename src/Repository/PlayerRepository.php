@@ -39,6 +39,13 @@ class PlayerRepository extends ServiceEntityRepository
         }
     }
 
+    public function findWithPagination($page,$limit){
+        $qb = $this->createQueryBuilder('s')
+        ->setFirstResult(($page-1)*$limit)
+        ->setMaxResults($limit);
+        return $qb->getQuery()->getResult();
+    }
+
 //    /**
 //     * @return Player[] Returns an array of Player objects
 //     */
