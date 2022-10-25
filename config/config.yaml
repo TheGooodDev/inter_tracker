@@ -1,0 +1,6 @@
+// config.yml
+doctrine:
+     orm:
+         dql:
+             numeric_functions:
+                 rand: DoctrineExtensions\Query\Mysql\Rand

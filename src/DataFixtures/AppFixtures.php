@@ -3,13 +3,21 @@
 namespace App\DataFixtures;
 
 use App\Entity\Challenge;
+use App\Entity\Classe;
 use App\Entity\Donjon;
+use App\Entity\Picture;
 use App\Entity\Player;
+use App\Entity\User;
+use App\Repository\PictureRepository;
+use DirectoryIterator;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Faker\Factory;
 use PhpParser\Node\Expr\List_;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
 
 class AppFixtures extends Fixture
 {
@@ -19,10 +27,17 @@ class AppFixtures extends Fixture
 
     private Generator $faker;
 
-    public function __construct()
+    /**
+     * Classe Hasheant le password
+     * @var UserPasswordHasherInterface
+     */
+    private $userPasswordHasher;
+    
+    public function __construct(UserPasswordHasherInterface $userPasswordHasher)
     {
+
         $this->faker = Factory::create("fr_FR");
-        $this->classArray = ["ecaflip","eniripsa","iop","crâ","féca","sacrieur","sadida","osamodas","enutrof","sram","xélor","pandawa","roublard","zobal","steamer","eliotrope","huppermage","ouginak"];
+        $this->classArray = ["cra","ecaflip","eliotrope","eniripsa","enutrof","feca","huppermage","iop","osamodas","ouginak","pandawa","roublard","sacrieur","sadida","sram","steamer","xelor","zobal"];
         $this->challenges = [
             "ABNEGATION",
             "ANACHORETE",
@@ -45,7 +60,6 @@ class AppFixtures extends Fixture
             "INCURABLE",
             "INTOUCHABLE",
             "JARDINIER",
-            "LES PETITS D'ABORD",
             "LE TEMPS QUI COURT",
             "MAINS PROPRES",
             "MYSTIQUE",
@@ -76,7 +90,6 @@ class AppFixtures extends Fixture
             "Lorsqu'un personnage attaque un ennemi, aucun autre allié ne doit le frapper pendant tout le long du combat.",
             "Vous ne pouvez utiliser qu'une seule fois la même action (corps à corps et sort) dans tout le combat. À noter que lors d'un échec critique, vous pouvez relancer le sort.",
             "Les joueurs doivent toujours utiliser le même élément d'attaque pendant tout le combat. Les dégâts infligés par Mot Stimulant, Mutilation, Roue de la Fortune, Contrecoup, Esprit Felin, Transfert de Vie, Mot de Sacrifice et Mot Drainant ne sont pas pris en compte.",
-            "Toutes les attaques doivent être concentrées sur le monstre ciblé jusqu'à sa mort. Les invocations ennemies sont prises en compte dans ce challenge, vous ne pouvez donc pas les tuer avant d'avoir vaincu le monstre ciblé.",
             "Lorsque vous touchez un ennemi, celui-ci doit être tué avant tous les autres.",
             "Vous devez invoquer votre Chaferfu à chaque fois qu'il est disponible",
             "Vous devez toujours terminer vos tours sur une cellule adjacente à celle d'un de vos adversaires.",
@@ -98,36 +111,101 @@ class AppFixtures extends Fixture
             "Ce challenge impose à chaque joueur de n'utiliser qu'un seul PM (point de mouvement) par tour. On remarque qu'Odorat fait échouer ce challenge de par la perte de PM qu'il inflige."
         ];
 
+
+        $this->donjon = [
+            "Crypte de Kardorim"
+        ];
+
+        $this->donjonLevel =[
+            10
+        ];
+
+        $this->picturesArray = [];
+        
+
+        $this->userPasswordHasher = $userPasswordHasher;
     }
 
     public function load(ObjectManager $manager): void
     {
 
+        foreach (new DirectoryIterator('./public/assets/pictures') as $fileInfo) {
+            if($fileInfo->isDot()) continue;
+            array_push($this->picturesArray, $fileInfo->getFilename());
+        }
+        $userNumber = 10;
+        sort($this->picturesArray,SORT_NATURAL);
+        
+
+       
+
+        //Authenticated Admin
+        $adminUser = new User();
+        $password = "password";
+        $adminUser->setEmail('admin')
+        ->setRoles(["ROLE_ADMIN"])
+        ->setPassword($this->userPasswordHasher->hashPassword($adminUser,$password));
+        $manager->persist($adminUser);
+        $manager->flush();
+        //Authenticated users
+        for ($i=0; $i <  $userNumber; $i++) { 
+            $userUser = new User();
+            $password = $this->faker->password(2,6);
+            $userUser->setEmail($this->faker->email() . '@' . $password)
+            ->setRoles(["ROLE_USER"])
+            ->setPassword($this->userPasswordHasher->hashPassword($userUser,$password));
+            $manager->persist($userUser);
+            $manager->flush();
+        }
+
+        $allPictures = [];
+        foreach ($this->picturesArray as $fileName){
+            $picture = new Picture();
+            $picture->setFile(new File("./public/assets/pictures/" . $fileName))
+            ->setRealPath($fileName)
+            ->setRealName(substr($fileName, strpos($fileName, "_") + 1))
+            ->setPublicPath("assets/pictures")
+            ->setMimeType("image/png")
+            ->setStatus(true);
+            $manager->persist($userUser);
+            $manager->flush();
+            array_push($allPictures,$picture);
+        }
+        
+        $count = 0;
+        for ($i = 0; $i < count($this->classArray);$i++){
+            $classe = new Classe();
+            $classe->setName($this->classArray[$i])
+            ->setPicture($allPictures[$count])
+            ->setStatus(true);
+            $manager->persist($classe);
+            $manager->flush();
+            $count++;
+        }
+
         $challengeList = [];
         for ($i = 0; $i < count($this->challenges);$i++){
             $challenge = new Challenge();
             $challenge->setChallengeName($this->challenges[$i])
+            ->setPicture($allPictures[$count])
             ->setDescription($this->description[$i]);
             array_push($challengeList,$challenge);
             $manager->persist($challenge);
             $manager->flush();
+            $count++;
         }
 
-        for ($i = 0; $i < 20; $i++) {
-            $player = new Player();
-            $player->setPseudo($this->faker->userName())
-            ->setClasse($this->classArray[$this->faker->numberBetween(0,count($this->classArray)-1)])
-            ->setStatus(true);
-            $manager->persist($player);
+
+        for ($i = 0; $i < count($this->donjon);$i++) {
             $donjon = new Donjon();
-            $donjon->setName($this->faker->streetName())
-            ->setLevel($this->faker->numberBetween(20,200))
+            $donjon->setName($this->donjon[$i])
+            ->setLevel($this->donjonLevel[$i])
             ->setChallenges($this->faker->randomElement($challengeList))
+            ->setPicture($allPictures[$count])
             ->setStatus(true);
             $manager->persist($donjon);
-
-
             $manager->flush();
+            $count++;
         }
 
     }

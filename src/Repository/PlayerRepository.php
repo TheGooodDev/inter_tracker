@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Player;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use DoctrineExtensions\Query\Mysql\Rand;
 
 /**
  * @extends ServiceEntityRepository<Player>
@@ -40,7 +41,7 @@ class PlayerRepository extends ServiceEntityRepository
     }
 
     public function findWithPagination($page,$limit){
-        $qb = $this->createQueryBuilder('s')
+        $qb = $this->createQueryBuilder('p')
         ->setFirstResult(($page-1)*$limit)
         ->setMaxResults($limit);
         return $qb->getQuery()->getResult();

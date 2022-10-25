@@ -39,6 +39,10 @@ class Donjon
     #[ORM\Column]
     private ?bool $status = null;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Picture $picture = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -88,6 +92,18 @@ class Donjon
     public function setStatus(bool $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getPicture(): ?Picture
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(Picture $picture): self
+    {
+        $this->picture = $picture;
 
         return $this;
     }

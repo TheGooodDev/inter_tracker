@@ -7,6 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
+use Symfony\Component\Serializer\Annotation\Groups;
+
 #[ORM\Entity(repositoryClass: PictureRepository::class)]
 /**
  * @Vich\Uploadable()
@@ -18,18 +20,23 @@ class Picture
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['getPicture','getAllPicture'])]
     #[ORM\Column(length: 255)]
     private ?string $realName = null;
-
+    
+    #[Groups(['getPicture','getAllPicture'])]
     #[ORM\Column(length: 255)]
     private ?string $realPath = null;
-
+    
+    #[Groups(['getPicture','getAllPicture'])]
     #[ORM\Column(length: 255)]
     private ?string $publicPath = null;
-
+    
+    #[Groups(['getPicture','getAllPicture'])]
     #[ORM\Column(length: 50)]
     private ?string $mimeType = null;
-
+    
+    #[Groups(['getPicture','getAllPicture'])]
     #[ORM\Column]
     private ?bool $status = null;
 
