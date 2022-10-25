@@ -35,6 +35,10 @@ class Challenge
     #[ORM\OneToMany(mappedBy: 'challenges', targetEntity: Donjon::class)]
     private Collection $donjons;
 
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Picture $picture = null;
+
     public function __construct()
     {
         $this->donjons = new ArrayCollection();
@@ -95,6 +99,18 @@ class Challenge
                 $donjon->setChallenges(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getPicture(): ?Picture
+    {
+        return $this->picture;
+    }
+
+    public function setPicture(Picture $picture): self
+    {
+        $this->picture = $picture;
 
         return $this;
     }

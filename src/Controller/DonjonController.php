@@ -6,6 +6,7 @@ use App\Entity\Donjon;
 use App\Repository\ChallengeRepository;
 use App\Repository\DonjonRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -64,6 +65,7 @@ class DonjonController extends AbstractController
     }
 
     #[Route('/api/donjons', name: 'donjon.create', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN',message: 'Noooooooooooooooooo')]
     public function createDonjon(
         Request $request,
         EntityManagerInterface $entityManager,
