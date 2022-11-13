@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Classe;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Faker\Generator;
+use Faker\Factory;
 
 /**
  * @extends ServiceEntityRepository<Classe>
@@ -39,7 +41,18 @@ class ClasseRepository extends ServiceEntityRepository
         }
     }
 
-    
+
+    /**
+     * Return a random classe entity
+     * @return Classe
+     */
+    public function getRandomClasse() : ?Classe
+    {
+        $this->faker = Factory::create("fr_FR");
+        $idtoLook = $this->faker->numberBetween(0,count($this->findAll())-1);
+        return $this->findAll()[$idtoLook];
+    }
+
 //    /**
 //     * @return Classe[] Returns an array of Classe objects
 //     */

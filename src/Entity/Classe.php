@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ClasseRepository;
 use Doctrine\ORM\Mapping as ORM;
 
+
 #[ORM\Entity(repositoryClass: ClasseRepository::class)]
 class Classe
 {
@@ -14,14 +15,19 @@ class Classe
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Groups(['getClasse'])]
     private ?string $name = null;
 
     #[ORM\Column]
+    #[Groups(['getClasse'])]
     private ?bool $status = null;
 
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['getClasse'])]
     private ?Picture $picture = null;
+
+    private Generator $faker;
 
     public function getId(): ?int
     {

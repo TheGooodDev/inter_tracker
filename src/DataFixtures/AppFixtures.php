@@ -142,7 +142,7 @@ class AppFixtures extends Fixture
         //Authenticated Admin
         $adminUser = new User();
         $password = "password";
-        $adminUser->setEmail('admin')
+        $adminUser->setUsername('admin')
         ->setRoles(["ROLE_ADMIN"])
         ->setPassword($this->userPasswordHasher->hashPassword($adminUser,$password));
         $manager->persist($adminUser);
@@ -151,7 +151,7 @@ class AppFixtures extends Fixture
         for ($i=0; $i <  $userNumber; $i++) { 
             $userUser = new User();
             $password = $this->faker->password(2,6);
-            $userUser->setEmail($this->faker->email() . '@' . $password)
+            $userUser->setUsername($this->faker->username() . '@' . $password)
             ->setRoles(["ROLE_USER"])
             ->setPassword($this->userPasswordHasher->hashPassword($userUser,$password));
             $manager->persist($userUser);

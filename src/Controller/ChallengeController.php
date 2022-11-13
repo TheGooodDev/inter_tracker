@@ -40,6 +40,20 @@ class ChallengeController extends AbstractController
         return new JsonResponse($jsonChallenges, Response::HTTP_OK, [], true);
     }
 
+    /**
+     * Retourne une réponse JSON contenant un challenge aléatoire.
+     */
+    #[Route('api/challenge/rand', name: 'challengerand.get', methods: ['GET'])]
+    public function getRandomChallenge( 
+        ChallengeRepository $repository,
+        SerializerInterface $serializer,
+        Request $request
+    ): JsonResponse {
+        $randomChallenge = $repository->getRandomChallenge();
+        $jsonClasse = $serializer->serialize($randomChallenge, 'json');
+        return new JsonResponse($jsonClasse, Response::HTTP_OK, [], true);
+    }
+
 
     #[Route('/api/challenge/{idChallenge}', name: 'challenge.getOne', methods: ['GET'])]
     #[ParamConverter("challenge", options: ["id" => "idChallenge"], class: "App\Entity\Challenge")]

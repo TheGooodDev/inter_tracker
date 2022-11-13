@@ -42,6 +42,20 @@ class DonjonController extends AbstractController
         return new JsonResponse($jsonDonjon, Response::HTTP_OK, [], true);
     }
 
+    /**
+     * Retourne une réponse JSON contenant un donjon aléatoire.
+     */
+    #[Route('api/donjon/rand', name: 'donjonrand.get', methods: ['GET'])]
+    public function getRandomDonjon( 
+        DonjonRepository $repository,
+        SerializerInterface $serializer,
+        Request $request
+    ): JsonResponse {
+        $randomDonjon = $repository->getRandomDonjon();
+        $jsonClasse = $serializer->serialize($randomDonjon, 'json');
+        return new JsonResponse($jsonClasse, Response::HTTP_OK, [], true);
+    }
+
 
     #[Route('/api/donjon/{idDonjon}', name: 'donjon.getOne', methods: ['GET'])]
     #[ParamConverter("donjon", options: ["id" => "idDonjon"], class: "App\Entity\Donjon")]

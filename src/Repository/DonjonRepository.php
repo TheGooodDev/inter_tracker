@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\Donjon;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Faker\Generator;
+use Faker\Factory;
 
 /**
  * @extends ServiceEntityRepository<Donjon>
@@ -44,6 +46,17 @@ class DonjonRepository extends ServiceEntityRepository
         ->setFirstResult(($page-1)*$limit)
         ->setMaxResults($limit);
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Return a random Donjon entity
+     * @return Donjon
+     */
+    public function getRandomDonjon() : ?Donjon
+    {
+        $this->faker = Factory::create("fr_FR");
+        $idtoLook = $this->faker->numberBetween(0,count($this->findAll())-1);
+        return $this->findAll()[$idtoLook];
     }
 
 //    /**
