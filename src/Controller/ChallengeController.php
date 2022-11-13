@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Challenge;
 use App\Repository\ChallengeRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -67,6 +68,7 @@ class ChallengeController extends AbstractController
 
     #[Route('/api/challenge/{idChallenge}', name: 'challenge.delete', methods: ['DELETE'])]
     #[ParamConverter("challenge", options:["id"=>"idChallenge"], class:"App\Entity\Challenge")]
+    #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function deleteChallenge(
         Challenge $challenge,
         EntityManagerInterface $entityManager
@@ -77,6 +79,7 @@ class ChallengeController extends AbstractController
     }
 
     #[Route('/api/challenges', name: 'challenge.create', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function createChallenge(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -96,6 +99,7 @@ class ChallengeController extends AbstractController
 
     #[Route('/api/challenge/{idChallenge}', name: 'challenge.update', methods: ['PUT'])]
     #[ParamConverter("challenge", options:["id"=>"idChallenge"], class:"App\Entity\Challenge")]
+    #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function updateChallenge(
         
         challenge $challenge,

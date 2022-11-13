@@ -41,6 +41,13 @@ class ChallengeRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * Return challenges with pagination and limit by page
+     *
+     * @param [int] $page
+     * @param [int] $limit
+     * @return Challenges
+     */
     public function findWithPagination($page,$limit){
         $qb = $this->createQueryBuilder('s')
         ->setFirstResult(($page-1)*$limit)

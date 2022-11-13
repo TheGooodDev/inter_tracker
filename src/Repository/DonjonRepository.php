@@ -41,6 +41,13 @@ class DonjonRepository extends ServiceEntityRepository
         }
     }
 
+        /**
+     * Return Entity with pagination and limit by page
+     *
+     * @param [int] $page
+     * @param [int] $limit
+     * @return Entity
+     */
     public function findWithPagination($page,$limit){
         $qb = $this->createQueryBuilder('s')
         ->setFirstResult(($page-1)*$limit)

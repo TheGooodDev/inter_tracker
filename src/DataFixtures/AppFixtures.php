@@ -164,7 +164,7 @@ class AppFixtures extends Fixture
             $picture->setFile(new File("./public/assets/pictures/" . $fileName))
             ->setRealPath($fileName)
             ->setRealName(substr($fileName, strpos($fileName, "_") + 1))
-            ->setPublicPath("assets/pictures")
+            ->setPublicPath("assets/pictures/" . $fileName)
             ->setMimeType("image/png")
             ->setStatus(true);
             $manager->persist($userUser);

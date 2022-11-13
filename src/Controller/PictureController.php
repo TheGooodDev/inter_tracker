@@ -6,6 +6,7 @@ use App\Entity\Picture;
 use App\Repository\PictureRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,6 +20,7 @@ use Symfony\Component\Validator\Constraints\Json;
 class PictureController extends AbstractController
 {
     #[Route('api/pictures/{idPicture}', name: 'picture.getOne',methods:['GET'])]
+    #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function getPicture(
         int $idPicture,
         SerializerInterface $serializer,
@@ -30,7 +32,7 @@ class PictureController extends AbstractController
         $picture = $pictureRepository->find($idPicture);        
         $relativePath = $picture->getPublicPath() . "/" . $picture->getRealPath();
         $location = $request->getUriForPath('/');
-        $location = $location . str_replace("/assets/pictures", $picture->getPublicPath(),$relativePath);
+        $location = $location . str_replace("/assets/pictures/", $picture->getPublicPath(),$relativePath);
         dd($location);
         if($picture){
             return new JsonResponse($serializer->serialize($picture, 'json',["groups"=>'getPicture']), JsonResponse::HTTP_OK,["Location"=>$location],true);
@@ -39,6 +41,7 @@ class PictureController extends AbstractController
     }
     
     #[Route('api/pictures', name: 'picture.create',methods:['POST'])]
+    #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function createPicture(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -54,7 +57,7 @@ class PictureController extends AbstractController
             $picture->setFile($file)
             ->setMimeType($file->getClientMimeType())
             ->setRealName($file->getClientOriginalName())
-            ->setPublicPath("assets/pictures")
+            ->setPublicPath("assets/pictures/")
             ->setStatus(true);
             $entityManager->persist($picture);
             $entityManager->flush();
