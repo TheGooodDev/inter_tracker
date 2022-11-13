@@ -15,7 +15,7 @@ class Player
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['getAllPlayer','getPlayer','getAllDonjons','getChallenge'])]
+    #[Groups(['getAllPlayer','getPlayer','getAllDonjons','getChallenge','getParty'])]
     #[Assert\NotBlank(message: "Player must have name")]
     #[ORM\Column(length: 255)]
     private ?string $pseudo = null;

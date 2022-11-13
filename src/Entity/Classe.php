@@ -19,21 +19,19 @@ class Classe
 
     #[Assert\NotBlank(message: "Classe must have name")]
     #[Assert\NotNull(message: "Classe must have name")]
-    #[Groups(['getAllClasse','getClasse','getPlayer','getAllPlayer'])]
+    #[Groups(['getAllClasse','getClasse','getPlayer','getAllPlayer','getParty'])]
     #[ORM\Column(length: 50)]
-    #[Groups(['getClasse'])]
     private ?string $name = null;
     
     #[Assert\NotBlank(message: "Classe must have status")]
     #[Assert\NotNull(message: "Classe must have status")]
     #[ORM\Column]
-    #[Groups(['getClasse'])]
+    #[Groups(['getClasse','getParty'])]
     private ?bool $status = null;
     
-    #[Groups(['getAllClasse','getClasse','getPlayer','getAllPlayer'])]
+    #[Groups(['getAllClasse','getClasse','getPlayer','getAllPlayer','getParty'])]
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['getClasse'])]
     private ?Picture $picture = null;
 
     private Generator $faker;

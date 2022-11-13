@@ -19,20 +19,20 @@ class Donjon
     #[Assert\NotBlank(message: "Donjon must have name")]
     #[Assert\NotNull(message: "Donjon must have name")]
     #[ORM\Column(length: 255)]
-    #[Groups(['getAllChallenges','getDonjon','getAllDonjons','getChallenge'])]
+    #[Groups(['getAllChallenges','getDonjon','getAllDonjons','getChallenge','getParty'])]
     private ?string $name = null;
 
     #[Assert\NotBlank(message: "Donjon must have a level")]
     #[Assert\NotNull(message: "Donjon must have a level")]
     #[ORM\Column]
-    #[Groups(['getAllChallenges','getDonjon','getAllDonjons','getChallenge'])]
+    #[Groups(['getAllChallenges','getDonjon','getAllDonjons','getChallenge','getParty'])]
     private ?int $level = null;
 
     #[Assert\NotBlank(message: "Donjon must have challenges")]
     #[Assert\NotNull(message: "Donjon must have challenges")]
     #[ORM\ManyToOne(inversedBy: 'donjons')]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['getDonjon','getAllDonjons'])]
+    #[ORM\JoinColumn(nullable: false)] 
+    #[Groups(['getDonjon','getAllDonjons','getParty'])]
     private ?Challenge $challenges = null;
 
     #[Assert\NotNull(message: "Donjon must have challenges")]
