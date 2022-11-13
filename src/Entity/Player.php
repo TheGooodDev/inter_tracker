@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\PlayerRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PlayerRepository::class)]
@@ -14,6 +15,7 @@ class Player
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['getAllPlayer','getPlayer','getAllDonjons','getChallenge'])]
     #[Assert\NotBlank(message: "Player must have name")]
     #[ORM\Column(length: 255)]
     private ?string $pseudo = null;

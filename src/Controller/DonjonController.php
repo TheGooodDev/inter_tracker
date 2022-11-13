@@ -55,6 +55,7 @@ class DonjonController extends AbstractController
 
     #[Route('/api/donjon/{idDonjon}', name: 'donjon.delete', methods: ['DELETE'])]
     #[ParamConverter("donjon", options:["id"=>"idDonjon"], class:"App\Entity\Donjon")]
+    #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function deletedonjon(
         Donjon $donjon,
         EntityManagerInterface $entityManager
@@ -65,7 +66,7 @@ class DonjonController extends AbstractController
     }
 
     #[Route('/api/donjons', name: 'donjon.create', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN',message: 'Noooooooooooooooooo')]
+    #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function createDonjon(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -93,6 +94,7 @@ class DonjonController extends AbstractController
 
     #[Route('/api/donjon/{idDonjon}', name: 'donjon.update', methods: ['PUT'])]
     #[ParamConverter("donjon", options:["id"=>"idDonjon"], class:"App\Entity\Donjon")]
+    #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function updateDonjon(
         
         Donjon $donjon,

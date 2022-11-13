@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Classe;
 use App\Repository\ClasseRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -46,6 +47,7 @@ class ClasseController extends AbstractController
 
     #[Route('/api/classe/{idClasse}', name: 'classe.delete', methods: ['DELETE'])]
     #[ParamConverter("classe", options:["id"=>"idClasse"], class:"App\Entity\classe")]
+    #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function deletePlayer(
         Classe $classe,
         EntityManagerInterface $entityManager
@@ -56,6 +58,7 @@ class ClasseController extends AbstractController
     }
 
     #[Route('/api/classes', name: 'classe.create', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function createPlayer(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -82,6 +85,7 @@ class ClasseController extends AbstractController
 
     #[Route('/api/classe/{idClasse}', name: 'classe.update', methods: ['PUT'])]
     #[ParamConverter("classe", options:["id"=>"idClasse"], class:"App\Entity\classe")]
+    #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function updateplayer(
         
         classe $classe,
