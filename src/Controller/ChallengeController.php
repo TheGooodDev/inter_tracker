@@ -15,6 +15,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class ChallengeController extends AbstractController
 {
@@ -31,13 +33,18 @@ class ChallengeController extends AbstractController
     public function getAllChallenges(
         ChallengeRepository $repository,
         SerializerInterface $serializer,
+        TagAwareCacheInterface $cache,
         Request $request
     ): JsonResponse {
-        $page = $request->get('page',1);
-        $limit = $request->get('limit',5);
-        $limit = $limit > 20 ? 20 : $limit;
-        $challenge = $repository->findWithPagination($page,$limit);
-        $jsonChallenges = $serializer->serialize($challenge, 'json', ['groups' => 'getAllChallenges']);
+        $idCache = "getAllChallenges";
+        $jsonChallenges = $cache->get($idCache, function(ItemInterface $item)use ($repository,$serializer){
+            echo "MISE EN CACHE";
+            $item->tag("challengeCache");
+            
+            $challenge = $repository->findAll();
+            return $serializer->serialize($challenge, 'json', ['groups' => 'getAllChallenges']);
+        });
+ 
         return new JsonResponse($jsonChallenges, Response::HTTP_OK, [], true);
     }
 
@@ -48,11 +55,12 @@ class ChallengeController extends AbstractController
     public function getRandomChallenge( 
         ChallengeRepository $repository,
         SerializerInterface $serializer,
+        TagAwareCacheInterface $cache,
         Request $request
     ): JsonResponse {
-        $randomChallenge = $repository->getRandomChallenge();
-        $jsonClasse = $serializer->serialize($randomChallenge, 'json');
-        return new JsonResponse($jsonClasse, Response::HTTP_OK, [], true);
+        $challenge = $repository->getRandomChallenge();
+        $jsonChallenges = $serializer->serialize($challenge, 'json', ['groups' => 'getChallenge']);
+        return new JsonResponse($jsonChallenges, Response::HTTP_OK, [], true);
     }
 
 
@@ -71,8 +79,10 @@ class ChallengeController extends AbstractController
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function deleteChallenge(
         Challenge $challenge,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        TagAwareCacheInterface $cache,
     ): JsonResponse {
+        $cache->invalidateTags(["challengeCache"]);
         $entityManager->remove($challenge);
         $entityManager->flush();
         return new JsonResponse(null,Response::HTTP_NO_CONTENT);
@@ -84,8 +94,10 @@ class ChallengeController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
-        UrlGeneratorInterface $urlGenerator
+        UrlGeneratorInterface $urlGenerator,
+        TagAwareCacheInterface $cache
     ): JsonResponse {
+        $cache->invalidateTags(["challengeCache"]);
         $challenge = $serializer->deserialize($request->getContent(), Challenge::class, 'json');
 
         $entityManager->persist($challenge);
@@ -106,8 +118,10 @@ class ChallengeController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
-        UrlGeneratorInterface $urlGenerator
+        UrlGeneratorInterface $urlGenerator,
+        TagAwareCacheInterface $cache
     ): JsonResponse {
+        $cache->invalidateTags(["challengeCache"]);
         $challenge = $serializer->deserialize(
             $request->getContent(),
             challenge::class,

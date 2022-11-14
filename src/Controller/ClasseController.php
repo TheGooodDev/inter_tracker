@@ -15,21 +15,31 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Repository\PictureRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
+
 
 class ClasseController extends AbstractController
 {
     #[Route('/api/classes', name: 'classe.getAll',methods:['GET'])]
-    public function getAllPlayers(
+    public function getAllClasse(
         ClasseRepository $repository,
         SerializerInterface $serializer,
+        TagAwareCacheInterface $cache,
         Request $request
     ): JsonResponse {
-        $page = $request->get('page',1);
-        $limit = $request->get('limit',18);
-        $limit = $limit > 20 ? 20 : $limit;
-        $classe = $repository->findAll();
-        $jsonPlayers = $serializer->serialize($classe, 'json');
-        return new JsonResponse($jsonPlayers, Response::HTTP_OK, [], true);
+        $idCache = "getAllClasse";
+        $jsonClasses = $cache->get($idCache, function(ItemInterface $item)use ($repository,$serializer){
+            echo "MISE EN CACHE";
+            $item->tag("classeCache");
+            
+            $challenge = $repository->findAll();
+            return $serializer->serialize($challenge, 'json', ['groups' => 'getAllClasse']);
+        });
+
+        return new JsonResponse($jsonClasses, Response::HTTP_OK, [], true);
     }
 
     /**
@@ -39,11 +49,14 @@ class ClasseController extends AbstractController
     public function classe( 
         ClasseRepository $repository,
         SerializerInterface $serializer,
+        TagAwareCacheInterface $cache,
         Request $request
     ): JsonResponse {
-        $randomClasse = $repository->getRandomClasse();
-        $jsonClasse = $serializer->serialize($randomClasse, 'json');
-        return new JsonResponse($jsonClasse, Response::HTTP_OK, [], true);
+
+        $challenge = $repository->getRandomClasse();
+        $jsonClasses = $serializer->serialize($challenge, 'json', ['groups' => 'getClasse']);
+
+        return new JsonResponse($jsonClasses, Response::HTTP_OK, [], true);
     }
 
 
@@ -62,8 +75,10 @@ class ClasseController extends AbstractController
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function deletePlayer(
         Classe $classe,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        TagAwareCacheInterface $cache
     ): JsonResponse {
+        $cache->invalidateTags(["classeCache"]);
         $entityManager->remove($classe);
         $entityManager->flush();
         return new JsonResponse(null,Response::HTTP_NO_CONTENT);
@@ -75,10 +90,11 @@ class ClasseController extends AbstractController
         Request $request,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
-        ClasseRepository $repository,
+        ValidatorInterface $validators,
         UrlGeneratorInterface $urlGenerator,
-        PictureRepository $pictureRepository
+        TagAwareCacheInterface $cache
     ): JsonResponse {
+        $cache->invalidateTags(["classeCache"]);
         $classe = $serializer->deserialize($request->getContent(), Classe::class, 'json');
         $classe->setStatus(true);
 
@@ -100,13 +116,14 @@ class ClasseController extends AbstractController
     #[ParamConverter("classe", options:["id"=>"idClasse"], class:"App\Entity\classe")]
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function updateplayer(
-        
+        PictureRepository $pictureRepository,
         classe $classe,
         Request $request,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
-        UrlGeneratorInterface $urlGenerator
+        TagAwareCacheInterface $cache
     ): JsonResponse {
+        $cache->invalidateTags(["classeCache"]);
         $classe = $serializer->deserialize(
             $request->getContent(),
             classe::class,

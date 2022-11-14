@@ -17,6 +17,8 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class DonjonController extends AbstractController
 {
@@ -32,13 +34,17 @@ class DonjonController extends AbstractController
     public function getAllDonjons(
         DonjonRepository $repository,
         SerializerInterface $serializer,
+        TagAwareCacheInterface $cache,
         Request $request
     ): JsonResponse {
-        $page = $request->get('page',1);
-        $limit = $request->get('limit',5);
-        $limit = $limit > 20 ? 20 : $limit;
-        $donjon = $repository->findWithPagination($page,$limit);
-        $jsonDonjon = $serializer->serialize($donjon, 'json', ['groups' => 'getAllDonjons']);
+        $idCache = "getAllDonjons";
+        $jsonDonjon = $cache->get($idCache, function(ItemInterface $item)use ($repository,$serializer){
+            echo "MISE EN CACHE";
+            $item->tag("donjonCache");
+            
+            $donjon = $repository->findAll();
+            return $serializer->serialize($donjon, 'json', ['groups' => 'getAllDonjons']);
+        });
         return new JsonResponse($jsonDonjon, Response::HTTP_OK, [], true);
     }
 
@@ -49,11 +55,12 @@ class DonjonController extends AbstractController
     public function getRandomDonjon( 
         DonjonRepository $repository,
         SerializerInterface $serializer,
-        Request $request
+        TagAwareCacheInterface $cache,
     ): JsonResponse {
-        $randomDonjon = $repository->getRandomDonjon();
-        $jsonClasse = $serializer->serialize($randomDonjon, 'json');
-        return new JsonResponse($jsonClasse, Response::HTTP_OK, [], true);
+        
+        $donjon = $repository->getRandomDonjon();
+        $jsonDonjon = $serializer->serialize($donjon, 'json', ['groups' => 'getDonjon']);
+        return new JsonResponse($jsonDonjon, Response::HTTP_OK, [], true);
     }
 
 
@@ -72,8 +79,10 @@ class DonjonController extends AbstractController
     #[ParamConverter("donjon", options:["id"=>"idDonjon"], class:"App\Entity\Donjon")]
     public function deletedonjon(
         Donjon $donjon,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        TagAwareCacheInterface $cache,
     ): JsonResponse {
+        $cache->invalidateTags(["donjonCache"]);
         $entityManager->remove($donjon);
         $entityManager->flush();
         return new JsonResponse(null,Response::HTTP_NO_CONTENT);
@@ -86,8 +95,11 @@ class DonjonController extends AbstractController
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
         ChallengeRepository $repository,
-        UrlGeneratorInterface $urlGenerator
+        UrlGeneratorInterface $urlGenerator,
+        TagAwareCacheInterface $cache
     ): JsonResponse {
+        $cache->invalidateTags(["donjonCache"]);
+
         $donjon = $serializer->deserialize($request->getContent(), Donjon::class, 'json');
         $donjon->setStatus(true);
 
@@ -116,8 +128,11 @@ class DonjonController extends AbstractController
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
         ChallengeRepository $repository,
-        UrlGeneratorInterface $urlGenerator
+        UrlGeneratorInterface $urlGenerator,
+        TagAwareCacheInterface $cache
     ): JsonResponse {
+        $cache->invalidateTags(["donjonCache"]);
+
         $donjon = $serializer->deserialize(
             $request->getContent(),
             Donjon::class,

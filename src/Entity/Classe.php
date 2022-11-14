@@ -34,7 +34,6 @@ class Classe
     #[ORM\JoinColumn(nullable: false)]
     private ?Picture $picture = null;
 
-    private Generator $faker;
 
     public function getId(): ?int
     {

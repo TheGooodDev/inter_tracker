@@ -16,6 +16,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
 class PlayerController extends AbstractController
 {
@@ -31,12 +32,16 @@ class PlayerController extends AbstractController
     #[Route('/api/players', name: 'player.getAll',methods:['GET'])]
     public function getAllPlayers(
         PlayerRepository $repository,
+
         SerializerInterface $serializer,
         Request $request
     ): JsonResponse {
         $page = $request->get('page',1);
         $limit = $request->get('limit',5);
         $limit = $limit > 20 ? 20 : $limit;
+
+
+
         $player = $repository->findWithPagination($page,$limit);
         $jsonPlayers = $serializer->serialize($player, 'json');
         return new JsonResponse($jsonPlayers, Response::HTTP_OK, [], true);

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Repository\ClasseRepository;
 use App\Repository\ChallengeRepository;
 use App\Repository\DonjonRepository;
+use App\Repository\PlayerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;

@@ -32,7 +32,7 @@ class Donjon
     #[Assert\NotNull(message: "Donjon must have challenges")]
     #[ORM\ManyToOne(inversedBy: 'donjons')]
     #[ORM\JoinColumn(nullable: false)] 
-    #[Groups(['getDonjon','getAllDonjons','getParty'])]
+    #[Groups(['getDonjon','getAllDonjons'])]
     private ?Challenge $challenges = null;
 
     #[Assert\NotNull(message: "Donjon must have challenges")]

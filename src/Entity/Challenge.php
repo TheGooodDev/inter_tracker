@@ -18,6 +18,7 @@ class Challenge
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['getAllChallenges','getDonjon','getAllDonjons','getChallenge','getParty'])]
     private ?int $id = null;
 
     #[Assert\NotBlank(message: "Challenge must have name")]
