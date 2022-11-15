@@ -4,16 +4,34 @@ namespace App\Entity;
 
 use App\Repository\DonjonRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+// use Symfony\Component\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\Groups;
 
 use Symfony\Component\Validator\Constraints as Assert;
+use Hateoas\Configuration\Annotation as Hateoas;
+
+
+/**
+ * @Hateoas\Relation(
+ *      "self",
+ *      href=@Hateoas\Route(
+ *          "donjon.getOne",
+ *          parameters = {
+ *              "idDonjon" = "expr(object.getId())"
+ *          },
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups="getAllDonjons")
+ * )
+ */
 
 #[ORM\Entity(repositoryClass: DonjonRepository::class)]
+
 class Donjon
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['getAllChallenges','getDonjon','getAllDonjons','getChallenge','getParty'])]
     private ?int $id = null;
 
     #[Assert\NotBlank(message: "Donjon must have name")]

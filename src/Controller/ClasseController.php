@@ -9,7 +9,10 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
+// use Symfony\Component\Serializer\SerializerInterface;
+use JMS\Serializer\SerializerInterface;
+use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializationContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Repository\PictureRepository;
@@ -36,7 +39,8 @@ class ClasseController extends AbstractController
             $item->tag("classeCache");
             
             $challenge = $repository->findAll();
-            return $serializer->serialize($challenge, 'json', ['groups' => 'getAllClasse']);
+            $context = SerializationContext::create()->setGroups("getAllClasse");
+            return $serializer->serialize($challenge, 'json',$context);
         });
 
         return new JsonResponse($jsonClasses, Response::HTTP_OK, [], true);
@@ -54,24 +58,26 @@ class ClasseController extends AbstractController
     ): JsonResponse {
 
         $challenge = $repository->getRandomClasse();
-        $jsonClasses = $serializer->serialize($challenge, 'json', ['groups' => 'getClasse']);
+        $context = SerializationContext::create()->setGroups("getClasse");
+        $jsonClasses = $serializer->serialize($challenge, 'json', $context);
 
         return new JsonResponse($jsonClasses, Response::HTTP_OK, [], true);
     }
 
 
     #[Route('/api/classe/{idClasse}', name: 'classe.getOne', methods: ['GET'])]
-    #[ParamConverter("classe", options:["id"=>"idClasse"], class:"App\Entity\classe")]
+    #[ParamConverter("classe", options:["id"=>"idClasse"], class:"App\Entity\Classe")]
     public function getClasse(
         Classe $classe,
         SerializerInterface $serializer
     ): JsonResponse {
-        $jsonPlayer = $serializer->serialize($classe, 'json');
-        return new JsonResponse($jsonPlayer, Response::HTTP_OK, ['accept' => 'json'], true);
+        $context = SerializationContext::create()->setGroups("getClasse");
+        $jsonClasse = $serializer->serialize($classe, 'json',$context);
+        return new JsonResponse($jsonClasse, Response::HTTP_OK, ['accept' => 'json'], true);
     }
 
     #[Route('/api/classe/{idClasse}', name: 'classe.delete', methods: ['DELETE'])]
-    #[ParamConverter("classe", options:["id"=>"idClasse"], class:"App\Entity\classe")]
+    #[ParamConverter("classe", options:["id"=>"idClasse"], class:"App\Entity\Classe")]
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function deletePlayer(
         Classe $classe,
@@ -108,12 +114,13 @@ class ClasseController extends AbstractController
         $location = $urlGenerator->generate("classe.getOne",['idClasse' => $classe->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
 
-        $jsonPlayer = $serializer->serialize($classe, 'json', ['getClasse']);
-        return new JsonResponse($jsonPlayer,Response::HTTP_CREATED,["location"=>$location],false);
+        $context = SerializationContext::create()->setGroups("getClasse");
+        $jsonClasse = $serializer->serialize($classe, 'json', $context);
+        return new JsonResponse($jsonClasse,Response::HTTP_CREATED,["location"=>$location],false);
     }
 
     #[Route('/api/classe/{idClasse}', name: 'classe.update', methods: ['PUT'])]
-    #[ParamConverter("classe", options:["id"=>"idClasse"], class:"App\Entity\classe")]
+    #[ParamConverter("classe", options:["id"=>"idClasse"], class:"App\Entity\Classe")]
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function updateplayer(
         PictureRepository $pictureRepository,
@@ -124,12 +131,13 @@ class ClasseController extends AbstractController
         TagAwareCacheInterface $cache
     ): JsonResponse {
         $cache->invalidateTags(["classeCache"]);
-        $classe = $serializer->deserialize(
+        $updateClasse = $serializer->deserialize(
             $request->getContent(),
             classe::class,
-            'json',
-            [AbstractNormalizer::OBJECT_TO_POPULATE=>$classe]
+            'json'
         );
+        $classe->setName($updateClasse->getName() ? $updateClasse->getName() : $classe->getName());
+
         $classe->setStatus(true);
         $content = $request->toArray();
 
@@ -138,7 +146,8 @@ class ClasseController extends AbstractController
         $entityManager->persist($classe);
         $entityManager->flush();
 
-        $jsonClasse = $serializer->serialize($classe, 'json', ["groups"=>'getClasse']);
+        $context = SerializationContext::create()->setGroups("getClasse");
+        $jsonClasse = $serializer->serialize($classe, 'json', $context);
         return new JsonResponse($jsonClasse,Response::HTTP_CREATED,[],true);
     }
 }

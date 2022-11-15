@@ -14,7 +14,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\SerializerInterface;
+// use Symfony\Component\Serializer\SerializerInterface;
+use JMS\Serializer\SerializerInterface;
+use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializationContext;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
@@ -42,7 +45,8 @@ class ChallengeController extends AbstractController
             $item->tag("challengeCache");
             
             $challenge = $repository->findAll();
-            return $serializer->serialize($challenge, 'json', ['groups' => 'getAllChallenges']);
+            $context = SerializationContext::create()->setGroups("getAllChallenges");
+            return $serializer->serialize($challenge, 'json',$context);
         });
  
         return new JsonResponse($jsonChallenges, Response::HTTP_OK, [], true);
@@ -59,7 +63,8 @@ class ChallengeController extends AbstractController
         Request $request
     ): JsonResponse {
         $challenge = $repository->getRandomChallenge();
-        $jsonChallenges = $serializer->serialize($challenge, 'json', ['groups' => 'getChallenge']);
+        $context = SerializationContext::create()->setGroups("getChallenge");
+        $jsonChallenges = $serializer->serialize($challenge, 'json', $context);
         return new JsonResponse($jsonChallenges, Response::HTTP_OK, [], true);
     }
 
@@ -70,7 +75,8 @@ class ChallengeController extends AbstractController
         Challenge $challenge,
         SerializerInterface $serializer
     ): JsonResponse {
-        $jsonChallenge = $serializer->serialize($challenge, 'json', ['groups' => 'getChallenge']);
+        $context = SerializationContext::create()->setGroups("getChallenge");
+        $jsonChallenge = $serializer->serialize($challenge, 'json', $context);
         return new JsonResponse($jsonChallenge, Response::HTTP_OK, ['accept' => 'json'], true);
     }
 
@@ -105,7 +111,8 @@ class ChallengeController extends AbstractController
 
         $location = $urlGenerator->generate("challenge.getOne",['idChallenge' => $challenge->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
-        $jsonchallenge = $serializer->serialize($challenge, 'json', ['getChallenge']);
+        $context = SerializationContext::create()->setGroups("getChallenge");
+        $jsonchallenge = $serializer->serialize($challenge, 'json', $context);
         return new JsonResponse($jsonchallenge,Response::HTTP_CREATED,["Location"=>$location],false);
     }
 
@@ -113,7 +120,6 @@ class ChallengeController extends AbstractController
     #[ParamConverter("challenge", options:["id"=>"idChallenge"], class:"App\Entity\Challenge")]
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function updateChallenge(
-        
         challenge $challenge,
         Request $request,
         EntityManagerInterface $entityManager,
@@ -122,20 +128,29 @@ class ChallengeController extends AbstractController
         TagAwareCacheInterface $cache
     ): JsonResponse {
         $cache->invalidateTags(["challengeCache"]);
-        $challenge = $serializer->deserialize(
-            $request->getContent(),
-            challenge::class,
-            'json',
-            [AbstractNormalizer::OBJECT_TO_POPULATE=>$challenge]
-        );
-        $content = $request->toArray();
+        // $challenge = $serializer->deserialize(
+        //     $request->getContent(),
+        //     challenge::class,
+        //     'json',
+        //     [AbstractNormalizer::OBJECT_TO_POPULATE=>$challenge]
+        // );
 
+        $updatedChallenge = $serializer->deserialize(
+            $request->getContent(),
+            Challenge::class,
+            'json'
+        );
+
+        $challenge->setChallengeName($updatedChallenge->getChallengeName() ? $updatedChallenge->getChallengeName() : $challenge->getChallengeName());
+        $challenge->setDescription($updatedChallenge->getDescription() ? $updatedChallenge->getDescription() : $challenge->getDescription());
+    
         $entityManager->persist($challenge);
         $entityManager->flush();
         
         $location = $urlGenerator->generate("challenge.getOne",['idChallenge' => $challenge->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         
-        $jsonchallenge = $serializer->serialize($challenge, 'json', ['groups'=>'getChallenge']);
+        $context = SerializationContext::create()->setGroups("getChallenge");
+        $jsonchallenge = $serializer->serialize($challenge, 'json', $context);
         return new JsonResponse($jsonchallenge,Response::HTTP_CREATED,["Location"=>$location],true);
     }
 }

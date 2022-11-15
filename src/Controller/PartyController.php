@@ -9,40 +9,30 @@ use App\Repository\PlayerRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\SerializerInterface;
+// use Symfony\Component\Serializer\SerializerInterface;
+use JMS\Serializer\SerializerInterface;
+use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializationContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Generator\UrlGenerator;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 
 class PartyController extends AbstractController
 {
-    #[Route('api/party', name: 'app_party')]
-    public function index(
-        PlayerRepository $playerRepository
-    ): JsonResponse
-    {
-        dd($playerRepository->findRandomPlayers(5));
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/PartyController.php',
-        ]);
-    }
-
     /**
      * Retourne une réponse JSON contenant une party aléatoire, qui contient un donjon aléatoire, un nombre défini en paramètres de classes aléatoires, et un nombre définis en paramètres de challenges aléatoires.
+     * @param int $numClasses
+     * @param int $numChallenges
+     * 
      */
-    #[Route('api/party/rand/', name: 'partyrand.get', methods: ['GET'])]
+    #[Route('api/party/rand/{numClasses}/{numChallenges}', name: 'partyrand.get', methods: ['GET'])]
     public function getRandomParty( 
         DonjonRepository $donjonRepository,
         ChallengeRepository $challengeRepository,
         ClasseRepository $classeRepository,
         SerializerInterface $serializer,
-        Request $request
+        int $numClasses,
+        int $numChallenges
     ): JsonResponse {
-        $numClasses = $request->get('numClasses',1);
-        $numChallenges = $request->get('numChallenges',1);
         $randomDonjon = $donjonRepository->getRandomDonjon();
         $randomClasses = [];
         $randomChallenges = [];
@@ -57,7 +47,8 @@ class PartyController extends AbstractController
         }
 
         $randomParty = array($randomDonjon, $randomChallenges, $randomClasses);
-        $jsonParty = $serializer->serialize($randomParty, 'json',['groups' => 'getParty']);
+        $context = SerializationContext::create()->setGroups("getParty");
+        $jsonParty = $serializer->serialize($randomParty, 'json',$context);
 
         return new JsonResponse($jsonParty, Response::HTTP_OK, [], true);
     }

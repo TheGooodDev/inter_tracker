@@ -13,8 +13,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerInterface;
+// use Symfony\Component\Serializer\SerializerInterface;
+use JMS\Serializer\SerializerInterface;
+use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializationContext;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
@@ -43,7 +45,8 @@ class PlayerController extends AbstractController
 
 
         $player = $repository->findWithPagination($page,$limit);
-        $jsonPlayers = $serializer->serialize($player, 'json');
+        $context = SerializationContext::create()->setGroups("getAllPlayer");
+        $jsonPlayers = $serializer->serialize($player, 'json',$context);
         return new JsonResponse($jsonPlayers, Response::HTTP_OK, [], true);
     }
 
@@ -54,7 +57,8 @@ class PlayerController extends AbstractController
         Player $player,
         SerializerInterface $serializer
     ): JsonResponse {
-        $jsonPlayer = $serializer->serialize($player, 'json');
+        $context = SerializationContext::create()->setGroups("getPlayer");
+        $jsonPlayer = $serializer->serialize($player, 'json',$context);
         return new JsonResponse($jsonPlayer, Response::HTTP_OK, ['accept' => 'json'], true);
     }
 
@@ -89,8 +93,8 @@ class PlayerController extends AbstractController
 
         $location = $urlGenerator->generate("player.getOne",['idPlayer' => $player->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
-
-        $jsonPlayer = $serializer->serialize($player, 'json', ['getPlayer']);
+        $context = SerializationContext::create()->setGroups("getPlayer");
+        $jsonPlayer = $serializer->serialize($player, 'json', $context);
         return new JsonResponse($jsonPlayer,Response::HTTP_CREATED,["location"=>$location],false);
     }
 
@@ -104,12 +108,13 @@ class PlayerController extends AbstractController
         SerializerInterface $serializer,
         UrlGeneratorInterface $urlGenerator
     ): JsonResponse {
-        $player = $serializer->deserialize(
+        $updatedPlayer = $serializer->deserialize(
             $request->getContent(),
             player::class,
-            'json',
-            [AbstractNormalizer::OBJECT_TO_POPULATE=>$player]
+            'json'
         );
+        $player->setPseudo($updatedPlayer->getPseudo() ? $updatedPlayer->getPseudo() : $player->getPseudo());
+        $player->setClasse($updatedPlayer->getClasse() ? $updatedPlayer->getClasse() : $player->getClasse());
         $player->setStatus(true);
         $content = $request->toArray();
 
@@ -118,7 +123,8 @@ class PlayerController extends AbstractController
         
         $location = $urlGenerator->generate("player.getOne",['idPlayer' => $player->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         
-        $jsonplayer = $serializer->serialize($player, 'json', ['groups'=>'getplayer']);
+        $context = SerializationContext::create()->setGroups("getPlayer");
+        $jsonplayer = $serializer->serialize($player, 'json', $context);
         return new JsonResponse($jsonplayer,Response::HTTP_CREATED,["Location"=>$location],true);
     }
 }

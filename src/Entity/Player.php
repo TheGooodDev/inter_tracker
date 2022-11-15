@@ -4,8 +4,24 @@ namespace App\Entity;
 
 use App\Repository\PlayerRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+// use Symfony\Component\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Hateoas\Configuration\Annotation as Hateoas;
+
+
+/**
+ * @Hateoas\Relation(
+ *      "self",
+ *      href=@Hateoas\Route(
+ *          "player.getOne",
+ *          parameters = {
+ *              "idPlayer" = "expr(object.getId())"
+ *          },
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups="getAllPlayer")
+ * )
+ */
 
 #[ORM\Entity(repositoryClass: PlayerRepository::class)]
 class Player
@@ -15,15 +31,17 @@ class Player
     #[ORM\Column]
     private ?int $id = null;
 
-    #[Groups(['getAllPlayer','getPlayer','getAllDonjons','getChallenge','getParty'])]
+    #[Groups(['getAllPlayer','getPlayer','getParty'])]
     #[Assert\NotBlank(message: "Player must have name")]
     #[ORM\Column(length: 255)]
     private ?string $pseudo = null;
 
+    #[Groups(['getAllPlayer','getPlayer','getParty'])]
     #[Assert\Choice(callback: 'getClasses')]
     #[ORM\Column(length: 255)]
     private ?string $classe = null;
 
+    #[Groups(['getAllPlayer','getPlayer','getParty'])]
     #[Assert\NotNull(message: "Status cant be null")]
     #[ORM\Column]
     private ?bool $status = null;

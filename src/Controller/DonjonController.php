@@ -16,7 +16,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\SerializerInterface;
+// use Symfony\Component\Serializer\SerializerInterface;
+use JMS\Serializer\SerializerInterface;
+use JMS\Serializer\Serializer;
+use JMS\Serializer\SerializationContext;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 
@@ -43,7 +46,8 @@ class DonjonController extends AbstractController
             $item->tag("donjonCache");
             
             $donjon = $repository->findAll();
-            return $serializer->serialize($donjon, 'json', ['groups' => 'getAllDonjons']);
+            $context = SerializationContext::create()->setGroups("getAllDonjons");
+            return $serializer->serialize($donjon, 'json', $context);
         });
         return new JsonResponse($jsonDonjon, Response::HTTP_OK, [], true);
     }
@@ -59,7 +63,8 @@ class DonjonController extends AbstractController
     ): JsonResponse {
         
         $donjon = $repository->getRandomDonjon();
-        $jsonDonjon = $serializer->serialize($donjon, 'json', ['groups' => 'getDonjon']);
+        $context = SerializationContext::create()->setGroups("getDonjon");
+        $jsonDonjon = $serializer->serialize($donjon, 'json', $context);
         return new JsonResponse($jsonDonjon, Response::HTTP_OK, [], true);
     }
 
@@ -71,7 +76,8 @@ class DonjonController extends AbstractController
         Donjon $donjon,
         SerializerInterface $serializer
     ): JsonResponse {
-        $jsondonjon = $serializer->serialize($donjon, 'json', ['groups' => 'getDonjon']);
+        $context = SerializationContext::create()->setGroups("getDonjon");
+        $jsondonjon = $serializer->serialize($donjon, 'json', $context);
         return new JsonResponse($jsondonjon, Response::HTTP_OK, ['accept' => 'json'], true);
     }
 
@@ -113,8 +119,8 @@ class DonjonController extends AbstractController
 
         $location = $urlGenerator->generate("donjon.getOne",['idDonjon' => $donjon->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
 
-
-        $jsondonjon = $serializer->serialize($donjon, 'json', ["groups"=>'getDonjon']);
+        $context = SerializationContext::create()->setGroups("getDonjon");
+        $jsondonjon = $serializer->serialize($donjon, 'json', $context);
         return new JsonResponse($jsondonjon,Response::HTTP_CREATED,["Location"=>$location],true);
     }
 
@@ -133,12 +139,14 @@ class DonjonController extends AbstractController
     ): JsonResponse {
         $cache->invalidateTags(["donjonCache"]);
 
-        $donjon = $serializer->deserialize(
+        $updateDonjon = $serializer->deserialize(
             $request->getContent(),
             Donjon::class,
-            'json',
-            [AbstractNormalizer::OBJECT_TO_POPULATE=>$donjon]
+            'json'
         );
+        $donjon->setName($updateDonjon->getName() ? $updateDonjon->getName() : $donjon->getName());
+        $donjon->setLevel($updateDonjon->getLevel() ? $updateDonjon->getLevel() : $donjon->getLevel());
+
         $donjon->setStatus(true);
         $content = $request->toArray();
         $challenge = $content["idChallenge"];
@@ -150,7 +158,9 @@ class DonjonController extends AbstractController
         
         $location = $urlGenerator->generate("donjon.getOne",['idDonjon' => $donjon->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         
-        $jsondonjon = $serializer->serialize($donjon, 'json', ['groups'=>'getDonjon']);
+        $context = SerializationContext::create()->setGroups("getDonjon");
+
+        $jsondonjon = $serializer->serialize($donjon, 'json', $context);
         return new JsonResponse($jsondonjon,Response::HTTP_CREATED,["Location"=>$location],true);
     }
 }
