@@ -41,20 +41,23 @@ class ChallengeController extends AbstractController
 
 
     /**
-     * Cette méthode permet de récupérer tout l'ensemble des challenges.
-     * @OA\Response(
-     *      response=200,
-     *      description="Retourne la liste des challenges",
-     *      @Model(type=Challenge::class)
-     * )
-     * 
-     * 
-     * @param ChallengeRepository $challengeRepository
-     * @param SerializerInterface $serializer
-     * @param TagAware  CacheInterface $cache
-     * @return JsonResponse
-     * 
-     */
+    * Cette méthode permet de récupérer tout les challenges.
+    * @OA\Response(
+    *      response=200,
+    *      description="Retourne la liste des challenges",
+    *      @OA\JsonContent(
+    *        type="array",
+    *        @OA\Items(ref=@Model(type=Challenge::class)))
+    *      )
+    * )
+    * 
+    * 
+    * @param ChallengeRepository $challengeRepository
+    * @param SerializerInterface $serializer
+    * @param TagAwareacheInterface $cache
+    * @return JsonResponse
+    * 
+    */
     #[Route('/api/challenges', name: 'challenge.getAll',methods:['GET'])]
     public function getAllChallenges(
         ChallengeRepository $repository,
@@ -74,7 +77,22 @@ class ChallengeController extends AbstractController
     }
 
 
-  
+    /**
+     * Cette méthode permet de récupérer un challenge aléatoire.
+     * @OA\Response(
+     *      response=200,
+     *      description="Retourne un challenge aléatoire",
+     *      @Model(type=Challenge::class)
+     * )
+     * 
+     * 
+     * @param ChallengeRepository $challengeRepository
+     * @param SerializerInterface $serializer
+     * @param TagAwareCacheInterface $cache
+     * @param Request $request
+     * @return JsonResponse
+     * 
+     */
     #[Route('api/challenge/rand', name: 'challengerand.get', methods: ['GET'])]
     public function getRandomChallenge( 
         ChallengeRepository $repository,
@@ -88,7 +106,20 @@ class ChallengeController extends AbstractController
         return new JsonResponse($jsonChallenges, Response::HTTP_OK, [], true);
     }
 
-
+    /**
+    * Cette méthode permet de récupérer un challenge en renseignant son ID.
+    * @OA\Response(
+    *      response=200,
+    *      description="Retourne un challenge, renseigné par son ID",
+    *      @Model(type=Challenge::class)
+    * )
+    * 
+    * 
+    * @param Challenge $challenge
+    * @param SerializerInterface $serializer
+    * @return JsonResponse
+    * 
+    */
     #[Route('/api/challenge/{idChallenge}', name: 'challenge.getOne', methods: ['GET'])]
     #[ParamConverter("challenge", options: ["id" => "idChallenge"], class: "App\Entity\Challenge")]
     public function getChallenge(
@@ -100,7 +131,19 @@ class ChallengeController extends AbstractController
         return new JsonResponse($jsonChallenge, Response::HTTP_OK, ['accept' => 'json'], true);
     }
 
-  
+    /**
+    * Cette méthode permet de supprimer un challenge en renseignant son ID.
+    * @OA\Response(
+    *      response=200,
+    *      description="Supprime un challenge, renseigné par son ID"
+    * )
+    * 
+    * 
+    * @param Challenge $challenge
+    * @param SerializerInterface $serializer
+    * @return JsonResponse
+    * 
+    */
     #[Route('/api/challenge/{idChallenge}', name: 'challenge.delete', methods: ['DELETE'])]
     #[ParamConverter("challenge", options:["id"=>"idChallenge"], class:"App\Entity\Challenge")]
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
@@ -115,7 +158,19 @@ class ChallengeController extends AbstractController
         return new JsonResponse(null,Response::HTTP_NO_CONTENT);
     }
 
-
+    /**
+    * Cette méthode permet de créer un challenge en renseignant un json possédant les Propriétés d'un challenge.
+    * @OA\Response(
+    *      response=200,
+    *      description="Créer un challenge en renseignant ses Propriétés."
+    * )
+    *  @OA\RequestBody(@Model(type=Challenge::class))
+    * 
+    * @param Challenge $challenge
+    * @param SerializerInterface $serializer
+    * @return JsonResponse
+    * 
+    */
     #[Route('/api/challenges', name: 'challenge.create', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function createChallenge(
@@ -138,6 +193,19 @@ class ChallengeController extends AbstractController
         return new JsonResponse($jsonchallenge,Response::HTTP_CREATED,["Location"=>$location],false);
     }
 
+    /**
+    * Cette méthode permet de modifier un challenge, séléctionner en renseignant son id, en envoyant un json possédant les nouvelles Propriétés du challenge.
+    * @OA\Response(
+    *      response=200,
+    *      description="Modifie le challenge séléctionner en renseignant son id."
+    * )
+    *  @OA\RequestBody(@Model(type=Challenge::class))
+    * 
+    * @param Challenge $challenge
+    * @param SerializerInterface $serializer
+    * @return JsonResponse
+    * 
+    */
     #[Route('/api/challenge/{idChallenge}', name: 'challenge.update', methods: ['PUT'])]
     #[ParamConverter("challenge", options:["id"=>"idChallenge"], class:"App\Entity\Challenge")]
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
@@ -150,12 +218,6 @@ class ChallengeController extends AbstractController
         TagAwareCacheInterface $cache
     ): JsonResponse {
         $cache->invalidateTags(["challengeCache"]);
-        // $challenge = $serializer->deserialize(
-        //     $request->getContent(),
-        //     challenge::class,
-        //     'json',
-        //     [AbstractNormalizer::OBJECT_TO_POPULATE=>$challenge]
-        // );
 
         $updatedChallenge = $serializer->deserialize(
             $request->getContent(),
