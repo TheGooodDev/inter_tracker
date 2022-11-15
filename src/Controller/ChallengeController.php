@@ -20,7 +20,14 @@ use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializationContext;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 
+
+/**
+* @OA\Tag(name="Challenges")
+*/
 class ChallengeController extends AbstractController
 {
     #[Route('/challenge', name: 'app_challenge')]
@@ -32,16 +39,30 @@ class ChallengeController extends AbstractController
         ]);
     }
 
+
+    /**
+     * Cette méthode permet de récupérer tout l'ensemble des challenges.
+     * @OA\Response(
+     *      response=200,
+     *      description="Retourne la liste des challenges",
+     *      @Model(type=Challenge::class)
+     * )
+     * 
+     * 
+     * @param ChallengeRepository $challengeRepository
+     * @param SerializerInterface $serializer
+     * @param TagAware  CacheInterface $cache
+     * @return JsonResponse
+     * 
+     */
     #[Route('/api/challenges', name: 'challenge.getAll',methods:['GET'])]
     public function getAllChallenges(
         ChallengeRepository $repository,
         SerializerInterface $serializer,
-        TagAwareCacheInterface $cache,
-        Request $request
+        TagAwareCacheInterface $cache
     ): JsonResponse {
         $idCache = "getAllChallenges";
         $jsonChallenges = $cache->get($idCache, function(ItemInterface $item)use ($repository,$serializer){
-            echo "MISE EN CACHE";
             $item->tag("challengeCache");
             
             $challenge = $repository->findAll();
@@ -52,9 +73,8 @@ class ChallengeController extends AbstractController
         return new JsonResponse($jsonChallenges, Response::HTTP_OK, [], true);
     }
 
-    /**
-     * Retourne une réponse JSON contenant un challenge aléatoire.
-     */
+
+  
     #[Route('api/challenge/rand', name: 'challengerand.get', methods: ['GET'])]
     public function getRandomChallenge( 
         ChallengeRepository $repository,
@@ -80,6 +100,7 @@ class ChallengeController extends AbstractController
         return new JsonResponse($jsonChallenge, Response::HTTP_OK, ['accept' => 'json'], true);
     }
 
+  
     #[Route('/api/challenge/{idChallenge}', name: 'challenge.delete', methods: ['DELETE'])]
     #[ParamConverter("challenge", options:["id"=>"idChallenge"], class:"App\Entity\Challenge")]
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
@@ -93,6 +114,7 @@ class ChallengeController extends AbstractController
         $entityManager->flush();
         return new JsonResponse(null,Response::HTTP_NO_CONTENT);
     }
+
 
     #[Route('/api/challenges', name: 'challenge.create', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]

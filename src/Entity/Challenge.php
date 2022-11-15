@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Hateoas\Configuration\Annotation as Hateoas;
-
+use OpenApi\Annotations as OA;
 
 /**
  * @Hateoas\Relation(
@@ -49,8 +49,10 @@ class Challenge
     #[ORM\OneToMany(mappedBy: 'challenges', targetEntity: Donjon::class)]
     private Collection $donjons;
 
+    #[Groups(['getChallenge'])]
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
+    
     private ?Picture $picture = null;
 
     public function __construct()

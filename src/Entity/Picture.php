@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use Symfony\Component\Serializer\Annotation\Groups;
-
+use OpenApi\Annotations as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PictureRepository::class)]
@@ -50,7 +50,10 @@ class Picture
      * @var File|null
      * @Vich\UploadableField(mapping="pictures", fileNameProperty="realPath")
      */
-    
+
+    /**
+    *  @OA\Property(type="string")
+    */
     private ?File $file;
 
     public function getId(): ?int
