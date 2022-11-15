@@ -16,7 +16,11 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Constraints\Json;
-
+use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+/**
+* @OA\Tag(name="Pictures")
+*/
 class PictureController extends AbstractController
 {
     #[Route('api/pictures/{idPicture}', name: 'picture.getOne',methods:['GET'])]

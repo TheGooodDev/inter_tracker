@@ -140,7 +140,8 @@ class ChallengeController extends AbstractController
     * 
     * 
     * @param Challenge $challenge
-    * @param SerializerInterface $serializer
+    * @param EntityManagerInterface $entityManager
+    * @param TagAwareCacheInterface $cache
     * @return JsonResponse
     * 
     */
@@ -166,8 +167,11 @@ class ChallengeController extends AbstractController
     * )
     *  @OA\RequestBody(@Model(type=Challenge::class))
     * 
-    * @param Challenge $challenge
+    * @param Request $request
+    * @param EntityManagerInterface $entityManager
     * @param SerializerInterface $serializer
+    * @param TagAwareCacheInterface $cache
+    * @param UrlGeneratorInterface $urlGenerator
     * @return JsonResponse
     * 
     */
@@ -202,6 +206,10 @@ class ChallengeController extends AbstractController
     *  @OA\RequestBody(@Model(type=Challenge::class))
     * 
     * @param Challenge $challenge
+    * @param Request $request
+    * @param EntityManagerInterface $entityManager
+    * @param UrlGeneratorInterface $urlGenerator
+    * @param TagAwareCacheInterface $cache
     * @param SerializerInterface $serializer
     * @return JsonResponse
     * 
@@ -210,7 +218,7 @@ class ChallengeController extends AbstractController
     #[ParamConverter("challenge", options:["id"=>"idChallenge"], class:"App\Entity\Challenge")]
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function updateChallenge(
-        challenge $challenge,
+        Challenge $challenge,
         Request $request,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,

@@ -22,7 +22,11 @@ use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializationContext;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
-
+use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+/**
+* @OA\Tag(name="Donjons")
+*/
 class DonjonController extends AbstractController
 {
     #[Route('/donjon', name: 'app_donjon')]

@@ -15,7 +15,11 @@ use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializationContext;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
+use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+/**
+* @OA\Tag(name="Parties")
+*/
 class PartyController extends AbstractController
 {
     /**

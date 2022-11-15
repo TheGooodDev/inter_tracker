@@ -19,7 +19,11 @@ use JMS\Serializer\Serializer;
 use JMS\Serializer\SerializationContext;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
-
+use OpenApi\Annotations as OA;
+use Nelmio\ApiDocBundle\Annotation\Model;
+/**
+* @OA\Tag(name="Players")
+*/
 class PlayerController extends AbstractController
 {
     #[Route('/player', name: 'app_player')]
