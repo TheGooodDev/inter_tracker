@@ -164,7 +164,7 @@ class ChallengeController extends AbstractController
     /**
     * Cette méthode permet de créer un challenge en renseignant un json possédant les Propriétés d'un challenge.
     * @OA\Response(
-    *      response=201s,
+    *      response=201,
     *      description="Créer un challenge en renseignant ses Propriétés."
     * )
     *  @OA\RequestBody(@Model(type=Challenge::class, groups={"getChallenge"}))
