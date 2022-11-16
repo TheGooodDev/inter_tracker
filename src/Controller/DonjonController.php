@@ -178,7 +178,8 @@ class DonjonController extends AbstractController
         SerializerInterface $serializer,
         ChallengeRepository $repository,
         UrlGeneratorInterface $urlGenerator,
-        TagAwareCacheInterface $cache
+        TagAwareCacheInterface $cache,
+        ValidatorInterface $validators
     ): JsonResponse {
         $cache->invalidateTags(["donjonCache"]);
 
@@ -189,7 +190,10 @@ class DonjonController extends AbstractController
         $challenge = $content["idChallenge"];
 
         $donjon->setChallenges($repository->find($challenge));
-
+        $errors = $validators->validate($donjon);
+        if($errors->count() > 0){
+            return new JsonResponse($serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST,[],true);
+        }
         $entityManager->persist($donjon);
         $entityManager->flush();
 
