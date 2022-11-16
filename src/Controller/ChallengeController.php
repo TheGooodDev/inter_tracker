@@ -47,7 +47,7 @@ class ChallengeController extends AbstractController
     *      description="Retourne la liste des challenges",
     *      @OA\JsonContent(
     *        type="array",
-    *        @OA\Items(ref=@Model(type=Challenge::class)))
+    *        @OA\Items(ref=@Model(type=Challenge::class,groups={"getAllChallenges"} )))
     *      )
     * )
     * 

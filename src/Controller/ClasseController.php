@@ -135,7 +135,7 @@ class ClasseController extends AbstractController
     #[Route('/api/classe/{idClasse}', name: 'classe.delete', methods: ['DELETE'])]
     #[ParamConverter("classe", options:["id"=>"idClasse"], class:"App\Entity\Classe")]
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
-    public function deletePlayer(
+    public function deleteClasse(
         Classe $classe,
         EntityManagerInterface $entityManager,
         TagAwareCacheInterface $cache

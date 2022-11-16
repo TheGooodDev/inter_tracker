@@ -42,7 +42,6 @@ class DonjonController extends AbstractController
         DonjonRepository $repository,
         SerializerInterface $serializer,
         TagAwareCacheInterface $cache,
-        Request $request
     ): JsonResponse {
         $idCache = "getAllDonjons";
         $jsonDonjon = $cache->get($idCache, function(ItemInterface $item)use ($repository,$serializer){
@@ -63,7 +62,6 @@ class DonjonController extends AbstractController
     public function getRandomDonjon( 
         DonjonRepository $repository,
         SerializerInterface $serializer,
-        TagAwareCacheInterface $cache,
     ): JsonResponse {
         
         $donjon = $repository->getRandomDonjon();

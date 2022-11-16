@@ -24,6 +24,11 @@ class PartyController extends AbstractController
 {
     /**
      * Retourne une réponse JSON contenant une party aléatoire, qui contient un donjon aléatoire, un nombre défini en paramètres de classes aléatoires, et un nombre définis en paramètres de challenges aléatoires.
+     * @OA\Response(
+     *      response=200,
+     *      description="Retourne un JSON contenant un party aléatoire",
+     *      @Model(type=Picture::class,groups={"getAllPicture"})
+     * )
      * @param int $numClasses
      * @param int $numChallenges
      * 

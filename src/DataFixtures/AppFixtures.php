@@ -113,11 +113,228 @@ class AppFixtures extends Fixture
 
 
         $this->donjon = [
-            "Crypte de Kardorim"
+            "CRYPTE DE KARDORIM",
+            "CHÂTEAU ENSABLÉ",
+            "GRANGE DU TOURNESOL AFFÂMÉ",
+            "COUR DU BOUFTOU ROYAL",
+            "DONJON DES TOFUS",
+            "DONJON DES BWORKS",
+            "DONJON DES SQUELETTES",
+            "CACHE DE KANKREBLATH",
+            "DONJON DES SCARAFEUILLES",
+            "MAISON FANTÔME",
+            "DONJON DES FORGERONS",
+            "GROTTE HESQUE",
+            "NID DU KWAKWA",
+            "ACADEMIE DES GOBS",
+            "DONJON DES LARVES",
+            "DONJON DES BLOPS",
+            "DONJON DES GELÉES",
+            "VILLAGE KANIBOUL",
+            "CHÂTEAU DU WA WABBIT",
+            "LES PITONS ROCHEUX DES CRAQUELEUR",
+            "ÉPREUVE DE DRAEGNERYS",
+            "ARCHE D'OTOMAÏ",
+            "LABORATOIRE DE BRUMEN TINCTORIAS",
+            "CIMETIÈRE DES MASTODONTES",
+            "TERRIER DU WA WABBIT",
+            "DOMAINE ANCESTRAL",
+            "CHAPITEAU DES MAGIK RIKTUS",
+            "BÂTEAU DU CHOUQUE",
+            "ANTRE DE LA REINE NYÉE",
+            "ANTRE DU DRAGON COCHON",
+            "THÉÂTRE DE DRAMAK",
+            "REPAIRE DU KHARNOZOR",
+            "CAVERNE DU KOULOSSE",
+            "FABRIQUE DE MALLÉFISK",
+            "TANIÈRE DU MEULOU",
+            "ARBRE DE MOON",
+            "BAMBUSAIE DE DAMADRYA",
+            "BIBLIOTHÈQUE DU MAÎTRE CORBAC",
+            "MIAUSOLÉE DU POUNICHEUR",
+            "DONJON DES RATS DE BONTA",
+            "DONJON DES RATS DE BRÂKMAR",
+            "GOULET DU RASBOUL",
+            "ANTRE DU BLOP MULTICOLOR ROYAL",
+            "ANTRE DE CROCABULIA",
+            "MÉGALITHE DE FRAKTALE",
+            "CENTRE DU LABYRINTHE DU MINOTOROR",
+            "SERRE DU ROYALMOUTH",
+            "REPAIRE DU SKEUNK",
+            "TOFULAILLER ROYAL",
+            "RING DU CAPITAINE ÉKARLATE",
+            "CAVERNE D'EL PIKO",
+            "VOLIÈRE DE LA HAUTE TRUCHE",
+            "VALLÉE DE LA DAME DES EAUX",
+            "ATELIER DU TANUKOUÏ SAN",
+            "CLAIRIÈRE DU CHÊNE MOU",
+            "FABRIQUE DE FOUX D'ARTIFICE",
+            "DOJO DU VENT",
+            "EXCAVATION DU MANSOT ROYAL",
+            "LABORATOIRE DU TYNRIL",
+            "EPAVE DU GROSLANDAIS VIOLENT",
+            "GALERIE DU PHOSSILE",
+            "DONJON DES RATS DU CHÂTEAU D'AMAKNA",
+            "GROTTE DE KANIGROULA",
+            "CANOPÉE DU KIMBO",
+            "SALLE DU MINOTOT",
+            "HYPOGÉE DE L'OBSIDIANTRE",
+            "TOMBE DU SHOGUN TOFUGAWA",
+            "PLATEAU DE USH",
+            "DEMEURE DES ESPRITS",
+            "BOYAU DU PÈRE VER",
+            "TANIÈRE GIVREFOUX",
+            "HOROLOGIUM DE XLII",
+            "GROTTE DU BWORKER",
+            "ANTRE DU KORRIANDRE",
+            "ANTRE DU KRALAMOURE GÉANT",
+            "TEMPLE DU GRAND OUGAH",
+            "CAVE DU TOXOLIATH",
+            "CAMP DU COMTE RAZOFF",
+            "ANTICHAMBRE DES GLOURSONS",
+            "MINE DE SAKAÏ",
+            "CAVERNES DU KOLOSSO",
+            "PYRAMIDE D'OMBRE",
+            "MANOIR DES KATREPAT",
+            "TOUR DE BETHEL",
+            "VAISSEAU DU CAPITAINE MÉNO",
+            "DÉFI DU CHALOEIL",
+            "LA TOUR DE LA CLEPSYDRE",
+            "ARBRE DE MORT",
+            "PALAIS DE DANTINÉA",
+            "BRASSERIE DU ROI DAZAK",
+            "TRÔNE DE SANG",
+            "BELVÉDÈRE D'ILYZAELLE",
+            "SALONS PRIVÉS DE KLIME",
+            "TEMPLE DE KOUTOULOU",
+            "AQUADÔME DE MERKATOR",
+            "SENTENCE DE LA BALANCE",
+            "FORGEFROIDE DE MISSIZ FRIZZ",
+            "LABORATOIRE DE NILEZA",
+            "VENTRE DE LA BALEINE",
+            "SOUVENIR D'IMAGIRO",
+            "TRÔNE DE LA COUR SOMBRE",
+            "MÉMOIRE D'ORUKAM",
+            "PALAIS DU ROI NIDAS",
+            "FERS DE LA TYRANNIE",
+            "TOUR DE SOLAR",
+            "TRANSPORTEUR DE SYLARGH",
+            "CHAMBRE DE TAL KASHA",
+            "OEIL DE VORTEX",
+            "SANCTUAIRE DE TORKÉLONIA"
+
         ];
 
         $this->donjonLevel =[
-            10
+            10,
+            20,
+            20,
+            30,
+            40,
+            40,
+            40,
+            40,
+            40,
+            50,
+            50,
+            50,
+            50,
+            50,
+            50,
+            60,
+            60,
+            60,
+            70,
+            70,
+            70,
+            70,
+            80,
+            80,
+            90,
+            90,
+            90,
+            90,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            100,
+            110,
+            110,
+            110,
+            110,
+            110,
+            110,
+            120,
+            120,
+            120,
+            120,
+            120,
+            120,
+            120,
+            130,
+            130,
+            130,
+            130,
+            130,
+            140,
+            140,
+            140,
+            140,
+            140,
+            150,
+            150,
+            150,
+            160,
+            160,
+            160,
+            160,
+            160,
+            160,
+            170,
+            170,
+            170,
+            170,
+            180,
+            180,
+            180,
+            180,
+            180,
+            190,
+            190,
+            190,
+            190,
+            190,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200,
+            200
         ];
 
         $this->picturesArray = [];
@@ -142,7 +359,7 @@ class AppFixtures extends Fixture
         //Authenticated Admin
         $adminUser = new User();
         $password = "password";
-        $adminUser->setUsername('admin')
+        $adminUser->setEmail('admin')
         ->setRoles(["ROLE_ADMIN"])
         ->setPassword($this->userPasswordHasher->hashPassword($adminUser,$password));
         $manager->persist($adminUser);
@@ -151,7 +368,7 @@ class AppFixtures extends Fixture
         for ($i=0; $i <  $userNumber; $i++) { 
             $userUser = new User();
             $password = $this->faker->password(2,6);
-            $userUser->setUsername($this->faker->username() . '@' . $password)
+            $userUser->setEmail($this->faker->username() . '@' . $password)
             ->setRoles(["ROLE_USER"])
             ->setPassword($this->userPasswordHasher->hashPassword($userUser,$password));
             $manager->persist($userUser);
@@ -176,8 +393,11 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < count($this->classArray);$i++){
             $classe = new Classe();
             $classe->setName($this->classArray[$i])
-            ->setPicture($allPictures[$count])
+
             ->setStatus(true);
+            if ($count < count($allPictures)){
+                $classe->setPicture($allPictures[$count]);
+            }
             $manager->persist($classe);
             $manager->flush();
             $count++;
@@ -187,8 +407,11 @@ class AppFixtures extends Fixture
         for ($i = 0; $i < count($this->challenges);$i++){
             $challenge = new Challenge();
             $challenge->setChallengeName($this->challenges[$i])
-            ->setPicture($allPictures[$count])
+
             ->setDescription($this->description[$i]);
+            if ($count < count($allPictures)){
+                $challenge->setPicture($allPictures[$count]);
+            }
             array_push($challengeList,$challenge);
             $manager->persist($challenge);
             $manager->flush();
@@ -201,12 +424,13 @@ class AppFixtures extends Fixture
             $donjon->setName($this->donjon[$i])
             ->setLevel($this->donjonLevel[$i])
             ->setChallenges($this->faker->randomElement($challengeList))
-            ->setPicture($allPictures[$count])
             ->setStatus(true);
+            if ($count < count($allPictures)){
+                $donjon->setPicture($allPictures[$count]);
+            }
             $manager->persist($donjon);
             $manager->flush();
             $count++;
         }
-
     }
 }
