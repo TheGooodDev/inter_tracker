@@ -1,5 +1,5 @@
 nelmio_api_doc:
-  models: { use_jms: false }
+  models: { use_jms: true }
   documentation:
     info:
       title: Ultimate Bravery Dofus

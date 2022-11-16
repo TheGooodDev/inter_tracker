@@ -23,6 +23,7 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 
 /**
@@ -47,7 +48,7 @@ class ChallengeController extends AbstractController
     *      description="Retourne la liste des challenges",
     *      @OA\JsonContent(
     *        type="array",
-    *        @OA\Items(ref=@Model(type=Challenge::class)))
+    *        @OA\Items(ref=@Model(type=Challenge::class, groups={"getAllChallenges"})))
     *      )
     * )
     * 
@@ -66,6 +67,7 @@ class ChallengeController extends AbstractController
     ): JsonResponse {
         $idCache = "getAllChallenges";
         $jsonChallenges = $cache->get($idCache, function(ItemInterface $item)use ($repository,$serializer){
+            echo "MISE EN CACHE";
             $item->tag("challengeCache");
             
             $challenge = $repository->findAll();
@@ -82,7 +84,7 @@ class ChallengeController extends AbstractController
      * @OA\Response(
      *      response=200,
      *      description="Retourne un challenge aléatoire",
-     *      @Model(type=Challenge::class)
+     *      @Model(type=Challenge::class, groups={"getChallenge"})
      * )
      * 
      * 
@@ -111,7 +113,7 @@ class ChallengeController extends AbstractController
     * @OA\Response(
     *      response=200,
     *      description="Retourne un challenge, renseigné par son ID",
-    *      @Model(type=Challenge::class)
+    *      @Model(type=Challenge::class, groups={"getChallenge"})
     * )
     * 
     * 
@@ -134,7 +136,7 @@ class ChallengeController extends AbstractController
     /**
     * Cette méthode permet de supprimer un challenge en renseignant son ID.
     * @OA\Response(
-    *      response=200,
+    *      response=204,
     *      description="Supprime un challenge, renseigné par son ID"
     * )
     * 
@@ -162,10 +164,10 @@ class ChallengeController extends AbstractController
     /**
     * Cette méthode permet de créer un challenge en renseignant un json possédant les Propriétés d'un challenge.
     * @OA\Response(
-    *      response=200,
+    *      response=201s,
     *      description="Créer un challenge en renseignant ses Propriétés."
     * )
-    *  @OA\RequestBody(@Model(type=Challenge::class))
+    *  @OA\RequestBody(@Model(type=Challenge::class, groups={"getChallenge"}))
     * 
     * @param Request $request
     * @param EntityManagerInterface $entityManager
@@ -182,7 +184,8 @@ class ChallengeController extends AbstractController
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
         UrlGeneratorInterface $urlGenerator,
-        TagAwareCacheInterface $cache
+        TagAwareCacheInterface $cache,
+        ValidatorInterface $validators
     ): JsonResponse {
         $cache->invalidateTags(["challengeCache"]);
         $challenge = $serializer->deserialize($request->getContent(), Challenge::class, 'json');
@@ -191,7 +194,10 @@ class ChallengeController extends AbstractController
         $entityManager->flush();
 
         $location = $urlGenerator->generate("challenge.getOne",['idChallenge' => $challenge->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
-
+        $errors = $validators->validate($challenge);
+        if($errors->count() > 0){
+            return new JsonResponse($serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST,[],true);
+        }
         $context = SerializationContext::create()->setGroups("getChallenge");
         $jsonchallenge = $serializer->serialize($challenge, 'json', $context);
         return new JsonResponse($jsonchallenge,Response::HTTP_CREATED,["Location"=>$location],false);
@@ -200,10 +206,10 @@ class ChallengeController extends AbstractController
     /**
     * Cette méthode permet de modifier un challenge, séléctionner en renseignant son id, en envoyant un json possédant les nouvelles Propriétés du challenge.
     * @OA\Response(
-    *      response=200,
+    *      response=201,
     *      description="Modifie le challenge séléctionner en renseignant son id."
     * )
-    *  @OA\RequestBody(@Model(type=Challenge::class))
+    *  @OA\RequestBody(@Model(type=Challenge::class, groups={"getChallenge"}))
     * 
     * @param Challenge $challenge
     * @param Request $request
