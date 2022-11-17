@@ -24,11 +24,13 @@ use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use OpenApi\Annotations as OA;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 /**
 * @OA\Tag(name="Donjons")
 */
 class DonjonController extends AbstractController
 {
+    
     #[Route('/donjon', name: 'app_donjon')]
     public function index(): JsonResponse
     {
@@ -37,6 +39,22 @@ class DonjonController extends AbstractController
             'path' => 'src/Controller/DonjonController.php',
         ]);
     }
+
+    /**
+    * Cette méthode permet de récupérer tout les donjons.
+    * @OA\Response(
+    *      response=200,
+    *      description="Récupérer tout les donjons.",
+    *      @Model(type=Donjon::class, groups={"getAllDonjons"})
+    * )
+    * 
+    * @param DonjonRepository $repository
+    * @param SerializerInterface $serializer
+    * @param TagAwareCacheInterface $cache
+    * @param Request $request
+    * @return JsonResponse
+    * 
+    */
     #[Route('/api/donjons', name: 'donjon.getAll',methods:['GET'])]
     public function getAllDonjons(
         DonjonRepository $repository,
@@ -56,8 +74,19 @@ class DonjonController extends AbstractController
     }
 
     /**
-     * Retourne une réponse JSON contenant un donjon aléatoire.
-     */
+    * Retourne une réponse JSON contenant un donjon aléatoire.
+    * @OA\Response(
+    *      response=200,
+    *      description="Récupère un donjon aléatoire.",
+    *      @Model(type=Donjon::class, groups={"getDonjon"})
+    * )
+    * 
+    * @param DonjonRepository $repository
+    * @param SerializerInterface $serializer
+    * @param TagAwareCacheInterface $cache
+    * @return JsonResponse
+    * 
+    */
     #[Route('api/donjon/rand', name: 'donjonrand.get', methods: ['GET'])]
     public function getRandomDonjon( 
         DonjonRepository $repository,
@@ -71,6 +100,19 @@ class DonjonController extends AbstractController
     }
 
 
+    /**
+    * Retourne un donjon via l'id en paramètre.
+    * @OA\Response(
+    *      response=200,
+    *      description="Récupère un donjon via l'id en paramètre.",
+    *      @Model(type=Donjon::class, groups={"getDonjon"})
+    * )
+    * 
+    * @param Donjon $donjon
+    * @param SerializerInterface $serializer
+    * @return JsonResponse
+    * 
+    */
     #[Route('/api/donjon/{idDonjon}', name: 'donjon.getOne', methods: ['GET'])]
     #[ParamConverter("donjon", options: ["id" => "idDonjon"], class: "App\Entity\Donjon")]
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
@@ -83,6 +125,19 @@ class DonjonController extends AbstractController
         return new JsonResponse($jsondonjon, Response::HTTP_OK, ['accept' => 'json'], true);
     }
 
+    /**
+    * Cette méthode permet de supprimer un donjon en renseignant son ID.
+    * @OA\Response(
+    *      response=204,
+    *      description="Cette méthode permet de supprimer un donjon en renseignant son ID.",
+    * )
+    * 
+    * @param Donjon $donjon
+    * @param EntityManagerInterface $entityManager
+    * @param TagAwareCacheInterface $cache
+    * @return JsonResponse
+    * 
+    */
     #[Route('/api/donjon/{idDonjon}', name: 'donjon.delete', methods: ['DELETE'])]
     #[ParamConverter("donjon", options:["id"=>"idDonjon"], class:"App\Entity\Donjon")]
     public function deletedonjon(
@@ -96,6 +151,23 @@ class DonjonController extends AbstractController
         return new JsonResponse(null,Response::HTTP_NO_CONTENT);
     }
 
+    /**
+    * Créer un donjon.
+    * @OA\Response(
+    *      response=201,
+    *      description="Créer un donjon.",
+    *      @Model(type=Donjon::class, groups={"getDonjon"})
+    * )
+    * 
+    * @param Request $request
+    * @param EntityManagerInterface $entityManager
+    * @param ChallengeRepository $repository
+    * @param UrlGeneratorInterface $urlGenerator
+    * @param TagAwareCacheInterface $cache
+    * @param SerializerInterface $serializer
+    * @return JsonResponse
+    * 
+    */
     #[Route('/api/donjons', name: 'donjon.create', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
     public function createDonjon(
@@ -126,6 +198,23 @@ class DonjonController extends AbstractController
         return new JsonResponse($jsondonjon,Response::HTTP_CREATED,["Location"=>$location],true);
     }
 
+    /**
+    * Modifier un donjon en donnant un ID.
+    * @OA\Response(
+    *      response=201,
+    *      description="Modifier un donjon en donnant un ID.",
+    *      @Model(type=Donjon::class, groups={"getDonjon"})
+    * )
+    * 
+    * @param Request $request
+    * @param EntityManagerInterface $entityManager
+    * @param ChallengeRepository $repository
+    * @param UrlGeneratorInterface $urlGenerator
+    * @param TagAwareCacheInterface $cache
+    * @param SerializerInterface $serializer
+    * @return JsonResponse
+    * 
+    */
     #[Route('/api/donjon/{idDonjon}', name: 'donjon.update', methods: ['PUT'])]
     #[ParamConverter("donjon", options:["id"=>"idDonjon"], class:"App\Entity\Donjon")]
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]

@@ -34,8 +34,8 @@ class ClasseController extends AbstractController
     * Cette méthode permet de récupérer toutes les classes.
     * @OA\Response(
     *      response=200,
-    *      description="Récupérer toutes les classes.",
-    *      @Model(type=Classe::class)
+    *      description="OK",
+    *      @Model(type=Classe::class, groups={"getAllClasse"})
     * )
     * 
     * @param ClasseRepository $repository
@@ -70,7 +70,7 @@ class ClasseController extends AbstractController
     * @OA\Response(
     *      response=200,
     *      description="Récupérer une classe aléatoire.",
-    *      @Model(type=Classe::class)
+    *      @Model(type=Classe::class, groups={"getClasse"})
     * )
     * 
     * @param ClasseRepository $repository
@@ -81,7 +81,7 @@ class ClasseController extends AbstractController
     * 
     */
     #[Route('api/classe/rand', name: 'classerand.get', methods: ['GET'])]
-    public function classe( 
+    public function getRandomClasse( 
         ClasseRepository $repository,
         SerializerInterface $serializer,
         TagAwareCacheInterface $cache,
@@ -100,7 +100,7 @@ class ClasseController extends AbstractController
     * @OA\Response(
     *      response=200,
     *      description="Récupérer une classe en renseignant son ID.",
-    *      @Model(type=Classe::class)
+    *      @Model(type=Classe::class, groups={"getClasse"})
     * )
     * 
     * @param Classe $classe
@@ -122,9 +122,8 @@ class ClasseController extends AbstractController
     /**
     * Supprime une classe en renseignant son ID.
     * @OA\Response(
-    *      response=200,
-    *      description="Supprime une classe en renseignant son ID.",
-    *      @Model(type=Classe::class)
+    *      response=204,
+    *      description="Supprime une classe en renseignant son ID."
     * )
     * @param Classe $classe
     * @param EntityManagerInterface $entityManager
@@ -149,23 +148,23 @@ class ClasseController extends AbstractController
     /**
     * Créer une classe en renseignant ses propriétés.
     * @OA\Response(
-    *      response=200,
+    *      response=400,
     *      description="Créer une classe en renseignant ses propriétés.",
-    *      @Model(type=Classe::class)
+    *      @Model(type=Classe::class, groups={"getClasse"})
     * )
     * @OA\RequestBody(@Model(type=Classe::class))
-    * @param Classe $classe
     * @param EntityManagerInterface $entityManager
     * @param TagAwareCacheInterface $cache
     * @param Request $request
     * @param UrlGeneratorInterface $urlGenerator
     * @param ValidatorInterface $validators
+    * @param SerializerInterface $serializer
     * @return JsonResponse
     * 
     */
     #[Route('/api/classes', name: 'classe.create', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
-    public function createPlayer(
+    public function createClasse(
         Request $request,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,
@@ -195,26 +194,26 @@ class ClasseController extends AbstractController
     /**
     * Modifie une classe en renseignant son id, et ses propriétés.
     * @OA\Response(
-    *      response=200,
+    *      response=201,
     *      description="Modifie une classe en renseignant son id, et ses propriétés.",
-    *      @Model(type=Classe::class)
+    *      @Model(type=Classe::class, groups={"getClasse"})
     * )
     * @OA\RequestBody(@Model(type=Classe::class))
     * @param Classe $classe
     * @param EntityManagerInterface $entityManager
     * @param TagAwareCacheInterface $cache
     * @param Request $request
-    * @param UrlGeneratorInterface $urlGenerator
-    * @param ValidatorInterface $validators
+    * @param SerialiserInterface $serializer
+    * @param PictureRepository $pictureRepository
     * @return JsonResponse
     * 
     */
     #[Route('/api/classe/{idClasse}', name: 'classe.update', methods: ['PUT'])]
     #[ParamConverter("classe", options:["id"=>"idClasse"], class:"App\Entity\Classe")]
     #[IsGranted('ROLE_ADMIN',message: 'Acces deny, you need an elevation')]
-    public function updateplayer(
+    public function updateClasse(
         PictureRepository $pictureRepository,
-        classe $classe,
+        Classe $classe,
         Request $request,
         EntityManagerInterface $entityManager,
         SerializerInterface $serializer,

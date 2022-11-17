@@ -55,10 +55,6 @@ class Picture
      * @var File|null
      * @Vich\UploadableField(mapping="pictures", fileNameProperty="realPath")
      */
-
-    /**
-    *  @OA\Property(type="string")
-    */
     private ?File $file;
 
     public function getId(): ?int

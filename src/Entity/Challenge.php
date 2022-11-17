@@ -52,7 +52,6 @@ class Challenge
     #[Groups(['getChallenge'])]
     #[ORM\OneToOne(cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
-    
     private ?Picture $picture = null;
 
     public function __construct()
