@@ -18,12 +18,21 @@ php bin/console lexik:jwt:generate-keypair
 ## Installation 
 
 Clone the repository
+
 Move inside it
+
 Run the following commands :
-composer install
-npm install
-php bin/console make:database
-php bin/console d:s:u
-php bin/console d:f:l
-symfony serve
-npm run build
+
+``composer install``
+
+``npm install``
+
+``php bin/console make:database``
+
+``php bin/console d:s:u``
+
+``php bin/console d:f:l``
+
+``symfony serve``
+
+``npm run build``
