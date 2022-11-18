@@ -34,7 +34,7 @@ class ClasseController extends AbstractController
     * Cette méthode permet de récupérer toutes les classes.
     * @OA\Response(
     *      response=200,
-    *      description="Récupérer toutes les classes.",
+    *      description="OK",
     *      @Model(type=Classe::class, groups={"getAllClasse"})
     * )
     * 

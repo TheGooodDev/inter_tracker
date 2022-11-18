@@ -45,7 +45,7 @@ class ChallengeController extends AbstractController
     * Cette méthode permet de récupérer tout les challenges.
     * @OA\Response(
     *      response=200,
-    *      description="Retourne la liste des challenges",
+    *      description="OK",
     *      @OA\JsonContent(
     *        type="array",
     *        @OA\Items(ref=@Model(type=Challenge::class, groups={"getAllChallenges"})))
@@ -83,7 +83,7 @@ class ChallengeController extends AbstractController
      * Cette méthode permet de récupérer un challenge aléatoire.
      * @OA\Response(
      *      response=200,
-     *      description="Retourne un challenge aléatoire",
+     *      description="OK",
      *      @Model(type=Challenge::class, groups={"getChallenge"})
      * )
      * 
@@ -112,7 +112,7 @@ class ChallengeController extends AbstractController
     * Cette méthode permet de récupérer un challenge en renseignant son ID.
     * @OA\Response(
     *      response=200,
-    *      description="Retourne un challenge, renseigné par son ID",
+    *      description="OK",
     *      @Model(type=Challenge::class, groups={"getChallenge"})
     * )
     * 
@@ -137,7 +137,7 @@ class ChallengeController extends AbstractController
     * Cette méthode permet de supprimer un challenge en renseignant son ID.
     * @OA\Response(
     *      response=204,
-    *      description="Supprime un challenge, renseigné par son ID"
+    *      description="HTTP_NO_CONTENT"
     * )
     * 
     * 
@@ -165,7 +165,7 @@ class ChallengeController extends AbstractController
     * Cette méthode permet de créer un challenge en renseignant un json possédant les Propriétés d'un challenge.
     * @OA\Response(
     *      response=201,
-    *      description="Créer un challenge en renseignant ses Propriétés."
+    *      description="HTTP_CREATED"
     * )
     *  @OA\RequestBody(@Model(type=Challenge::class, groups={"getChallenge"}))
     * 
@@ -197,17 +197,18 @@ class ChallengeController extends AbstractController
         $errors = $validators->validate($challenge);
         if($errors->count() > 0){
             return new JsonResponse($serializer->serialize($errors, 'json'), JsonResponse::HTTP_BAD_REQUEST,[],true);
-        }
+        };
         $context = SerializationContext::create()->setGroups("getChallenge");
         $jsonchallenge = $serializer->serialize($challenge, 'json', $context);
         return new JsonResponse($jsonchallenge,Response::HTTP_CREATED,["Location"=>$location],false);
     }
+    
 
     /**
     * Cette méthode permet de modifier un challenge, séléctionner en renseignant son id, en envoyant un json possédant les nouvelles Propriétés du challenge.
     * @OA\Response(
     *      response=201,
-    *      description="Modifie le challenge séléctionner en renseignant son id."
+    *      description="HTTP_CREATED"
     * )
     *  @OA\RequestBody(@Model(type=Challenge::class, groups={"getChallenge"}))
     * 

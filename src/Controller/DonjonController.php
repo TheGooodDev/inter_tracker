@@ -41,10 +41,10 @@ class DonjonController extends AbstractController
     }
 
     /**
-    * Cette méthode permet de récupérer toutes les donjons.
+    * Cette méthode permet de récupérer tout les donjons.
     * @OA\Response(
     *      response=200,
-    *      description="Récupérer toutes les donjons.",
+    *      description="Récupérer tout les donjons.",
     *      @Model(type=Donjon::class, groups={"getAllDonjons"})
     * )
     * 
@@ -60,7 +60,6 @@ class DonjonController extends AbstractController
         DonjonRepository $repository,
         SerializerInterface $serializer,
         TagAwareCacheInterface $cache,
-        Request $request
     ): JsonResponse {
         $idCache = "getAllDonjons";
         $jsonDonjon = $cache->get($idCache, function(ItemInterface $item)use ($repository,$serializer){
@@ -92,7 +91,6 @@ class DonjonController extends AbstractController
     public function getRandomDonjon( 
         DonjonRepository $repository,
         SerializerInterface $serializer,
-        TagAwareCacheInterface $cache,
     ): JsonResponse {
         
         $donjon = $repository->getRandomDonjon();

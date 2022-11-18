@@ -12,6 +12,13 @@ nelmio_api_doc:
           scheme: bearer
           bearerFormat: JWT
           in: header
+      schemas:
+        FileUpload:
+          type: object
+          properties:
+              file:
+                  type: string
+                  format: binary
     security:
       - Bearer: []
  
