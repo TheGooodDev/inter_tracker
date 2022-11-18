@@ -12,7 +12,8 @@ Create a file .env.local and fill it with the data from .env
 Replace the informations inside with your owns.
 
 Create a directory called 'jwt' inside the config one, then run the command :
-php bin/console lexik:jwt:generate-keypair
+
+``php bin/console lexik:jwt:generate-keypair``
 
 
 ## Installation 
